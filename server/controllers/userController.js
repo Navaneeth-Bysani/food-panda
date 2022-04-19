@@ -1,4 +1,4 @@
-const {getAllUsersQuery} = require('./../db/queries');
+const {getAllUsersQuery, placeOrderQuery} = require('./../db/queries');
 const oracledb = require('oracledb');
 const dbConfig = require('./../db/dbConfig');
 
@@ -28,23 +28,19 @@ exports.placeOrder = async(req,res,next) => {
     const connection = await oracledb.getConnection(dbConfig);
     // const userId
     const userid = req.user.id;
+    const orderDetails = [
+        req.user.id,
+        req.params.rid
+    ];
     try {
-        let user = await connection.execute(signupQuery, userDetails, {autoCommit : true});
+        let order = await connection.execute(placeOrderQuery, orderDetails, {autoCommit : true});
         
         res.status(201).json({
             status : 'success',
-            user
+            order
         })
     } catch (err) {
-        // console.error(err);
-        if(err.errorNum === 1) {
-            console.error('unique constraint is violated');
-            res.status(400).json({
-                status : 'failed',
-                message : 'already have an account. try login!'
-            });
-            next();
-        }
+        console.error(err);
     } finally {
         if (connection) {
             try {

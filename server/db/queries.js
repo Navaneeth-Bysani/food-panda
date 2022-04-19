@@ -36,9 +36,20 @@ const createOrderTable = `
             userId NUMBER,
             order_time TIMESTAMP,
             rid VARCHAR(20),
-            
+            FOREIGN KEY (userId) REFERENCES users(id),
+            FOREIGN KEY (rid) REFERENCES restaurants(id),
+            isCompleted VARCHAR(4)
         )
 `;
+
+const createOrderedItemsTable = `
+        CREATE TABLE ordersList (
+            orderId NUMBER,
+            itemId NUMBER,
+            quanitity NUMBER
+        )
+`;
+
 // creating sequence queries
 const createItemSequence = `
             CREATE SEQUENCE itemSeq
@@ -89,6 +100,16 @@ const addItemQuery = `
             )
 `;
 
+const placeOrderQuery = `
+            INSERT INTO orders VALUES (
+                orderSeq.nextVal,
+                :userId,
+                LOCALTIMESTAMP,
+                :rid,
+                'NO'
+            )
+`;
+
 //select queries
 const vendorLoginQuery = `
                 SELECT * FROM restaurants WHERE email = :email AND password = :password
@@ -113,6 +134,19 @@ const getAllItemsQuery = `
 const findUserById = `
             SELECT * FROM users WHERE id = :id
 `;
+
+// const ordersFromRestaurantQuery = `
+//             SELECT * FROM orders WHERE rid = :rid
+// `;
+
+const ordersFromRestaurantQuery = `
+            SELECT orders.id, orders.order_time, users.name, users.phone 
+            FROM orders
+            LEFT JOIN users
+            ON orders.userId = users.id
+            WHERE rid = :rid
+`;
+
 module.exports = {
     createUserTable,
     signupQuery,
@@ -128,5 +162,9 @@ module.exports = {
     getAllItemsQuery,
     createUserSequence,
     findUserById,
-    createOrderSequence
+    createOrderSequence,
+    createOrderTable,
+    placeOrderQuery,
+    ordersFromRestaurantQuery,
+    createOrderedItemsTable
 };

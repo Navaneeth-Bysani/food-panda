@@ -72,7 +72,6 @@ exports.loggedInUser = async (req, res, next) => {
     ];
     
     try {
-        console.log(userDetails);
         let currentUser = await connection.execute(findUserById, userDetails);
         let user = currentUser.rows[0];
         if(currentUser.rows.length !== 0) {

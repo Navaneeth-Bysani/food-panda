@@ -1,5 +1,12 @@
-const {getAllRestaurants, addItemQuery, getAllItemsQuery} = require('./../db/queries');
+const {
+    getAllRestaurants, 
+    addItemQuery, 
+    getAllItemsQuery, 
+    ordersFromRestaurantQuery
+} = require('./../db/queries');
+
 const oracledb = require('oracledb');
+
 const dbConfig = require('./../db/dbConfig');
 
 exports.getAllRestaurants = async(req,res,next) => {
@@ -89,3 +96,54 @@ exports.addItem = async(req,res,next) => {
         }
     }
 }
+
+exports.getAllRestaurantOrders = async(req,res,next) => {
+    const rid = req.params.rid;
+    const restaurantDetails = [
+        rid
+    ];
+
+    const connection = await oracledb.getConnection(dbConfig);
+    try {
+        let orders = await connection.execute(ordersFromRestaurantQuery, restaurantDetails);
+        
+        res.status(201).json({
+            status : 'success',
+            orders
+        })
+    } catch (err) {
+        console.error(err);
+    } finally {
+        if (connection) {
+            try {
+              await connection.close();
+            } catch (err) {
+              console.error(err);
+            }
+        }
+    }
+}
+
+exports.getAllOrders = async(req,res,next) => {
+    const connection = await oracledb.getConnection(dbConfig);
+    try {
+        
+        let orders = await connection.execute(`SELECT * FROM orders`);
+        
+        res.status(201).json({
+            status : 'success',
+            orders
+        })
+    } catch (err) {
+        console.error(err);
+    } finally {
+        if (connection) {
+            try {
+              await connection.close();
+            } catch (err) {
+              console.error(err);
+            }
+        }
+    }
+}
+
