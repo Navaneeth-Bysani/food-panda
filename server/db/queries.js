@@ -90,6 +90,7 @@ const vendorSignUpQuery = `
                 :description,
                 :phone
             )
+            RETURNING id INTO :ids
 `;
 
 const addItemQuery = `
