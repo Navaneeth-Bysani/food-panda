@@ -1,5 +1,6 @@
 const app = require('./app.js');
+const connection = require('./db/connection');
 
-app.listen(3000, () => {
-    console.log('connected to port 3000');
+app.listen(4000, async () => {
+    console.log('Running on port 4000');
 })
