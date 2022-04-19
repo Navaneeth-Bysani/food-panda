@@ -108,8 +108,16 @@ const placeOrderQuery = `
                 :rid,
                 'NO'
             )
+            RETURNING id INTO :ids
 `;
 
+const insertOrderItem = `
+            INSERT INTO ordersList VALUES (
+                :orderId,
+                :itemId,
+                :quantity
+            )
+`;
 //select queries
 const vendorLoginQuery = `
                 SELECT * FROM restaurants WHERE email = :email AND password = :password
@@ -135,10 +143,6 @@ const findUserById = `
             SELECT * FROM users WHERE id = :id
 `;
 
-// const ordersFromRestaurantQuery = `
-//             SELECT * FROM orders WHERE rid = :rid
-// `;
-
 const ordersFromRestaurantQuery = `
             SELECT orders.id, orders.order_time, users.name, users.phone 
             FROM orders
@@ -146,6 +150,12 @@ const ordersFromRestaurantQuery = `
             ON orders.userId = users.id
             WHERE rid = :rid
 `;
+
+const getOrderedItems = `
+            SELECT * FROM ordersList WHERE orderId = :oid
+`;
+
+
 
 module.exports = {
     createUserTable,
@@ -166,5 +176,7 @@ module.exports = {
     createOrderTable,
     placeOrderQuery,
     ordersFromRestaurantQuery,
-    createOrderedItemsTable
+    createOrderedItemsTable,
+    insertOrderItem,
+    getOrderedItems
 };
