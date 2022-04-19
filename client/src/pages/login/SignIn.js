@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,7 +13,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import './signin.css'; 
+import './signin.css';
 
 function Copyright(props) {
   return (
@@ -30,12 +31,16 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignIn() {
+
+  const [username, setusername] = useState("")
+  const [password, setpassword] = useState("")
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+      username: username,
+      password: password,
     });
   };
 
@@ -65,6 +70,10 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
+              value={username}
+              onChange={(e) =>
+                setusername(e.target.value)
+              }
               id="email"
               label="Email Address"
               name="email"
@@ -75,16 +84,16 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
+              value={password}
+              onChange={(e) =>
+                setpassword(e.target.value)
+              }
               name="password"
               label="Password"
               type="password"
               id="password"
               autoComplete="current-password"
             />
-            {/* <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            /> */}
             <Button
               type="submit"
               fullWidth
@@ -93,8 +102,8 @@ export default function SignIn() {
             >
               Sign In
             </Button>
-            <Link href="#" variant="body2">
-                  Don't have an account? Sign Up
+            <Link href="/signup" variant="body2">
+              Don't have an account? Sign Up
             </Link>
           </Box>
         </Box>
