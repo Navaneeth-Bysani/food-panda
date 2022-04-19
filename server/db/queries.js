@@ -2,10 +2,11 @@
 
 const createUserTable = `
     CREATE TABLE users (
-        email VARCHAR(40) PRIMARY KEY,
+        email VARCHAR(40) UNIQUE,
         name VARCHAR(30),
         phone VARCHAR(12),
-        password VARCHAR(10)
+        password VARCHAR(10),
+        id NUMBER PRIMARY KEY
     )
 `;
 
@@ -36,13 +37,20 @@ const createItemSequence = `
             INCREMENT BY 1
 `;
 
+const createUserSequence = `
+            CREATE SEQUENCE userSeq
+            START WITH 1
+            INCREMENT BY 1
+`;
+
 //insert queries
 const signupQuery = `
         INSERT INTO users VALUES (
             :email,
             :name,
             :phone,
-            :password
+            :password,
+            userSeq.nextVal
         )
 `;
 
@@ -99,5 +107,6 @@ module.exports = {
     createItemSequence,
     createItemsTable,
     addItemQuery,
-    getAllItemsQuery
+    getAllItemsQuery,
+    createUserSequence
 };

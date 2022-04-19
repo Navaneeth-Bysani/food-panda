@@ -4,20 +4,24 @@ const {
     createUserTable, 
     createRestaurantTable, 
     createItemSequence, 
-    createItemsTable
+    createItemsTable,
+    createUserSequence
 } = require('./queries');
 
 const connFunc = async () => {
     const connection = await oracledb.getConnection(dbConfig); 
     if(connection) {
         console.log('db connection is established...');
-        // await connection.execute(`create table test (id number)`);
+        
         
         try {
+            
+            await connection.execute(createUserTable);
+            await connection.execute(createUserSequence);
             await connection.execute(createItemsTable);
             await connection.execute(createItemSequence);
             await connection.execute(createRestaurantTable);
-            await connection.execute(createUserTable);
+            
             
         } catch (err) {
             if(err.errorNum != 955)
