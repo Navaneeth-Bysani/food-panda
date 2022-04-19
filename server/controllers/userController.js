@@ -26,13 +26,8 @@ exports.getAllUsers = async(req,res,next) => {
 
 exports.placeOrder = async(req,res,next) => {
     const connection = await oracledb.getConnection(dbConfig);
-    const userDetails = [
-        req.body.userId,
-        req.body.name,
-        req.body.phone,
-        req.body.password
-    ];
-
+    // const userId
+    const userid = req.user.id;
     try {
         let user = await connection.execute(signupQuery, userDetails, {autoCommit : true});
         

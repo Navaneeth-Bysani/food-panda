@@ -30,6 +30,15 @@ const createItemsTable = `
         )
 `;
 
+const createOrderTable = `
+        CREATE TABLE orders (
+            id NUMBER PRIMARY KEY,
+            userId NUMBER,
+            order_time TIMESTAMP,
+            rid VARCHAR(20),
+            
+        )
+`;
 // creating sequence queries
 const createItemSequence = `
             CREATE SEQUENCE itemSeq
@@ -39,6 +48,12 @@ const createItemSequence = `
 
 const createUserSequence = `
             CREATE SEQUENCE userSeq
+            START WITH 1
+            INCREMENT BY 1
+`;
+
+const createOrderSequence = `
+            CREATE SEQUENCE orderSeq
             START WITH 1
             INCREMENT BY 1
 `;
@@ -95,6 +110,9 @@ const getAllItemsQuery = `
             SELECT * FROM items WHERE rid = :rid
 `;
 
+const findUserById = `
+            SELECT * FROM users WHERE id = :id
+`;
 module.exports = {
     createUserTable,
     signupQuery,
@@ -108,5 +126,7 @@ module.exports = {
     createItemsTable,
     addItemQuery,
     getAllItemsQuery,
-    createUserSequence
+    createUserSequence,
+    findUserById,
+    createOrderSequence
 };

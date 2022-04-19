@@ -5,7 +5,8 @@ const {
     createRestaurantTable, 
     createItemSequence, 
     createItemsTable,
-    createUserSequence
+    createUserSequence,
+    createOrderSequence
 } = require('./queries');
 
 const connFunc = async () => {
@@ -15,7 +16,7 @@ const connFunc = async () => {
         
         
         try {
-            
+            await connection.execute(createOrderSequence);
             await connection.execute(createUserTable);
             await connection.execute(createUserSequence);
             await connection.execute(createItemsTable);
