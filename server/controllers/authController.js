@@ -17,8 +17,8 @@ const signToken = id => {
 }
 
 const createSendToken = (user, statusCode, res) => {
-    const token = signToken(user[4]);
-
+    const token = signToken(user.ID);
+    
     const cookieOptions = {
         expires : new Date(Date.now() + JWT_COOKIE_EXPIRES_IN*24*60*60*1000),
         httpOnly : true
@@ -31,9 +31,10 @@ const createSendToken = (user, statusCode, res) => {
     res.status(statusCode).json({
         status : "success",
         user : {
-            email : user[0],
-            name : user[1],
-            id : user[4]
+            email : user.EMAIL,
+            name : user.NAME,
+            phone : user.PHONE,
+            id : user.ID
         },
         token
     })
@@ -123,8 +124,10 @@ exports.login = async(req,res, next) => {
     ];
     
     try {
-        let user = await connection.execute(loginQuery, userDetails);
+        let user = await connection.execute(loginQuery, userDetails, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+    
         if(user.rows.length !== 0) {
+            
             createSendToken(user.rows[0], 200, res);
             // res.status(201).json({
             //     status : 'success',
@@ -163,7 +166,7 @@ exports.login = async(req,res, next) => {
 
 exports.signup = async(req,res,next) => {
     const connection = await oracledb.getConnection(dbConfig);
-    const userDetails = [
+    let userDetails = [
         req.body.email,
         req.body.name,
         req.body.phone,
@@ -171,12 +174,31 @@ exports.signup = async(req,res,next) => {
     ];
 
     try {
-        let user = await connection.execute(signupQuery, userDetails, {autoCommit : true});
-        
-        res.status(201).json({
-            status : 'success',
-            user
-        })
+        let user = await connection.execute(signupQuery, {
+            email : req.body.email,
+            name : req.body.name,
+            phone : req.body.phone,
+            password : req.body.password,
+            ids : {type : oracledb.NUMBER, dir : oracledb.BIND_OUT}
+        }, {autoCommit : true});
+
+        userDetails = [
+            req.body.email,
+            req.body.password
+        ]
+
+        user = await connection.execute(loginQuery, userDetails, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+
+        if(user.rows.length !== 0) {
+            
+            createSendToken(user.rows[0], 200, res);
+            
+        } else {
+            res.status(400).json({
+                status : 'failed',
+                message : 'either the email or the password is wrong'
+            })
+        }
     } catch (err) {
         // console.error(err);
         if(err.errorNum === 1) {

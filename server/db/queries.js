@@ -78,6 +78,7 @@ const signupQuery = `
             :password,
             userSeq.nextVal
         )
+        RETURNING id INTO :ids
 `;
 
 const vendorSignUpQuery = `
