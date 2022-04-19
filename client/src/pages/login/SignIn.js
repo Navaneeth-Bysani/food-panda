@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
+import axios from 'axios';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -42,6 +43,12 @@ export default function SignIn() {
       username: username,
       password: password,
     });
+    axios.post('http://localhost:4000/auth/login', {
+      email : username,
+      password : password
+    }).then(result => {
+      console.log(result);
+    })
   };
 
   return (
