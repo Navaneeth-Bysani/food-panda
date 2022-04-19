@@ -39,7 +39,7 @@ exports.getAllItems = async(req,res,next) => {
 
     const connection = await oracledb.getConnection(dbConfig);
     try {
-        let items = await connection.execute(getAllItemsQuery, restaurantDetails);
+        let items = await connection.execute(getAllItemsQuery, restaurantDetails, { outFormat: oracledb.OUT_FORMAT_OBJECT });
         
         res.status(201).json({
             status : 'success',
