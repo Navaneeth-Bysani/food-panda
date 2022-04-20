@@ -36,7 +36,7 @@ exports.placeOrder = async (req, res, next) => {
             ids: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT }
         }, { autoCommit: true });
         const order_id = order.outBinds.ids[0];
-
+        
         orderedItems.forEach(item => {
             connection.execute(insertOrderItem, [
                 order_id,
@@ -47,7 +47,8 @@ exports.placeOrder = async (req, res, next) => {
 
         res.status(201).json({
             status: 'success',
-            order
+            order,
+            orderId : order_id
         })
     } catch (err) {
         console.error(err);
