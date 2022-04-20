@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -6,13 +6,22 @@ import Box from '@mui/material/Box';
 import './home.css'
 import Card from '@mui/material/Card';
 import { Button, CardActions, CardContent, makeStyles, Typography } from '@mui/material';
-
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const theme = createTheme();
 
 
 export default function Home() {
 
+    const [restaurants, setrestaurants] = useState([])
+
+    useEffect(() => {
+
+        axios.get('http://localhost:4000/restaurants').then(result => {
+            setrestaurants(result.data.vendors)
+        })
+    }, [])
 
     return (
         <ThemeProvider theme={theme}>
@@ -35,12 +44,29 @@ export default function Home() {
                         display: 'flex',
                         flexDirection: 'row',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
                     }}
                 >
-                    <VendorCard />
-                    <VendorCard />
-                    <VendorCard />
+                    {restaurants ?
+                        restaurants.slice(0, 2).map((restaurant) => {
+                            return (<VendorCard rest={restaurant} />)
+                        }) : null
+                    }
+                </Box>
+                <Box
+                    sx={{
+                        marginTop: 2,
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                    {restaurants ?
+                        restaurants.slice(2, 4).map((restaurant) => {
+                            return (<VendorCard rest={restaurant} />)
+                        }) : null
+                    }
                 </Box>
                 <Typography sx={{
                     fontSize: 28,
@@ -70,19 +96,21 @@ export default function Home() {
 }
 
 
-const VendorCard = () => {
+const VendorCard = ({ rest }) => {
 
+    const navigate = useNavigate()
     const [state, setState] = useState({
         raised: false,
         shadow: 1,
     })
+    const [restaurant, setrestaurant] = useState(rest)
 
 
     return (
         <div>
             <Card
                 sx={{
-                    minWidth: 275,
+                    minWidth: 400,
                     marginLeft: 8,
                     marginRight: 8,
                     marginTop: 3,
@@ -98,7 +126,7 @@ const VendorCard = () => {
                 onMouseOut={() => setState({ raised: false, shadow: 1 })}
                 raised={state.raised} zdepth={state.shadow}
                 onClick={() => {
-                    console.log("clicked")
+                    navigate('/restaurant/' + restaurant[1])
                 }}
             >
                 <CardContent>
@@ -106,16 +134,13 @@ const VendorCard = () => {
                         Word of the Day
                     </Typography> */}
                     <Typography variant="h5" component="div">
-                        Restaurant Name
+                        {restaurant ? restaurant[0] : "Restaurant Name"}
                     </Typography>
-                    <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        Location
-                    </Typography>
+                    {/* <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                        {restaurant ? restaurant[1] : "id"}
+                    </Typography> */}
                     <Typography variant="body2">
-                        No. of orders remaining:
-                    </Typography>
-                    <Typography variant="body2">
-                        Approx wait time:
+                        {restaurant ? restaurant[4] : "Description"}
                     </Typography>
                 </CardContent>
                 <CardActions sx={{
