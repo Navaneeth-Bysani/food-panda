@@ -29,7 +29,7 @@ export default function Home() {
         axios.get('http://localhost:4000/restaurants', { withCredentials: true }).then(result => {
             setrestaurants(result.data.vendors);
             console.log(result);
-        })
+        }).catch(err => console.log(err))
         // const cook = cookies.get('jwt')
         console.log(cookies.jwt)
 

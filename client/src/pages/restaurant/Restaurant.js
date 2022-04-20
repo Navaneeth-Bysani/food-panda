@@ -98,13 +98,17 @@ export default function Restaurant() {
         console.log(orderedItems);
         axios.post('http://localhost:4000/users/order/' + rId, {
             items: orderedItems
-        }).then(result => {
+        },
+            { withCredentials: true }
+        ).then(result => {
             console.log("Hi")
             console.log(result)
             setItems([])
             getItems()
             setTotalPrice(0)
             closeOrderModalOnClick()
+        }).catch(err => {
+            console.log(err)
         })
     }
 

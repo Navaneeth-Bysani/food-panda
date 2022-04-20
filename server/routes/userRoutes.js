@@ -7,7 +7,7 @@ const { verifyJwtToken, loggedInUser } = require('./../controllers/authControlle
 router.get('/', userController.getAllUsers);
 router.post('/order/:rid', userController.placeOrder);
 // router.post('/order/:rid', verifyJwtToken, loggedInUser, userController.placeOrder);
-router.get('/order/:oid', userController.getOrderDetails);
+// router.get('/order/:oid', userController.getOrderDetails);
 // router.get('/order/:oid', verifyJwtToken, loggedInUser, userController.getOrderDetails);
 
 module.exports = router;

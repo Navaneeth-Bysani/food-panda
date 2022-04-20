@@ -30,9 +30,10 @@ exports.placeOrder = async (req, res, next) => {
     const orderedItems = req.body.items;
     if (!req.user) {
         req.user = {
-            id: 21
+            id: 1
         };
     }
+    console.log(req.user);
     try {
         let order = await connection.execute(placeOrderQuery, {
             userId: req.user.id,
