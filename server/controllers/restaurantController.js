@@ -4,9 +4,10 @@ const {
     getAllItemsQuery,
     ordersFromRestaurantQuery,
     deleteItemQuery,
-    updateItemQuery
+    updateItemQuery,
+    getOrderedItems
 } = require('./../db/queries');
-
+const { promisify } = require('util');
 const oracledb = require('oracledb');
 
 const dbConfig = require('./../db/dbConfig');
@@ -134,11 +135,14 @@ exports.getAllRestaurantOrders = async (req, res, next) => {
 
     const connection = await oracledb.getConnection(dbConfig);
     try {
-        let orders = await connection.execute(ordersFromRestaurantQuery, restaurantDetails);
+        let orders = await connection.execute(ordersFromRestaurantQuery, restaurantDetails, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        let items = {};
+        let finalOrders = [...orders.rows];
 
         res.status(201).json({
             status: 'success',
-            orders
+            orders : orders.rows,
+            items : items
         })
     } catch (err) {
         console.error(err);
