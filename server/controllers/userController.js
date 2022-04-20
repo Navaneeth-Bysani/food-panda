@@ -1,14 +1,14 @@
-const {getAllUsersQuery, placeOrderQuery, insertOrderItem, getOrderedItems} = require('./../db/queries');
+const { getAllUsersQuery, placeOrderQuery, insertOrderItem, getOrderedItems } = require('./../db/queries');
 const oracledb = require('oracledb');
 const dbConfig = require('./../db/dbConfig');
 
-exports.getAllUsers = async(req,res,next) => {
+exports.getAllUsers = async (req, res, next) => {
     const connection = await oracledb.getConnection(dbConfig);
     try {
         let users = await connection.execute(getAllUsersQuery);
-        
+
         res.status(201).json({
-            status : 'success',
+            status: 'success',
             users
         })
     } catch (err) {
@@ -16,25 +16,29 @@ exports.getAllUsers = async(req,res,next) => {
     } finally {
         if (connection) {
             try {
-              await connection.close();
+                await connection.close();
             } catch (err) {
-              console.error(err);
+                console.error(err);
             }
         }
     }
 }
 
-exports.placeOrder = async(req,res,next) => {
+exports.placeOrder = async (req, res, next) => {
     const connection = await oracledb.getConnection(dbConfig);
-    
+
     const orderedItems = req.body.items;
-    
+    if (!req.user) {
+        req.user = {
+            id: 1
+        };
+    }
     try {
         let order = await connection.execute(placeOrderQuery, {
-            userId : req.user.id,
-            rid : req.params.id,
-            ids : {type : oracledb.NUMBER, dir : oracledb.BIND_OUT}
-        }, {autoCommit : true});
+            userId: req.user.id,
+            rid: req.params.id,
+            ids: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT }
+        }, { autoCommit: true });
         const order_id = order.outBinds.ids[0];
 
         orderedItems.forEach(item => {
@@ -42,11 +46,11 @@ exports.placeOrder = async(req,res,next) => {
                 order_id,
                 item.itemId,
                 item.quantity
-            ], {autoCommit : true})
+            ], { autoCommit: true })
         });
 
         res.status(201).json({
-            status : 'success',
+            status: 'success',
             order
         })
     } catch (err) {
@@ -54,15 +58,15 @@ exports.placeOrder = async(req,res,next) => {
     } finally {
         if (connection) {
             try {
-              await connection.close();
+                await connection.close();
             } catch (err) {
-              console.error(err);
+                console.error(err);
             }
         }
     }
 }
 
-exports.getOrderDetails = async(req,res,next) => {
+exports.getOrderDetails = async (req, res, next) => {
     const connection = await oracledb.getConnection(dbConfig);
     const orderDetails = [
         req.params.oid
@@ -70,9 +74,9 @@ exports.getOrderDetails = async(req,res,next) => {
 
     try {
         let orderedItems = await connection.execute(getOrderedItems, orderDetails, { outFormat: oracledb.OUT_FORMAT_OBJECT });
-        
+
         res.status(201).json({
-            status : 'success',
+            status: 'success',
             orderedItems
         })
     } catch (err) {
@@ -80,9 +84,9 @@ exports.getOrderDetails = async(req,res,next) => {
     } finally {
         if (connection) {
             try {
-              await connection.close();
+                await connection.close();
             } catch (err) {
-              console.error(err);
+                console.error(err);
             }
         }
     }
