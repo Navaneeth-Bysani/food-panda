@@ -19,7 +19,8 @@ export default function Home() {
     useEffect(() => {
 
         axios.get('http://localhost:4000/restaurants').then(result => {
-            setrestaurants(result.data.vendors)
+            setrestaurants(result.data.vendors);
+            console.log(result);
         })
     }, [])
 
@@ -49,7 +50,7 @@ export default function Home() {
                 >
                     {restaurants ?
                         restaurants.slice(0, 2).map((restaurant) => {
-                            return (<VendorCard rest={restaurant} />)
+                            return (<VendorCard rest={restaurant} key = {restaurant[1]} />)
                         }) : null
                     }
                 </Box>

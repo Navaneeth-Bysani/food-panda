@@ -13,6 +13,7 @@ const theme = createTheme();
 export default function Restaurant() {
     let { rId } = useParams()
     const [items, setItems] = useState([])
+    const [totalPrice, setTotalPrice] = useState(0);
 
     useEffect(() => {
         axios.get('http://localhost:4000/restaurants/items/' + rId).then(result => {
@@ -22,6 +23,7 @@ export default function Restaurant() {
                     ID: item.ID,
                     name: item.NAME,
                     quantity: 0,
+                    price : item.PRICE,
                     isSelected: false
                 })
             })
@@ -40,21 +42,23 @@ export default function Restaurant() {
 
     const handleQuantityIncrease = (index) => {
         const newItems = [...items];
-
+        let price = 0;
         if (newItems[index].isSelected) {
             newItems[index].quantity++;
+            price = price + newItems[index].price;
         }
-
+        setTotalPrice(totalPrice + price);
         setItems(newItems);
     };
 
     const handleQuantityDecrease = (index) => {
         const newItems = [...items];
-
+        let price = 0;
         if (newItems[index].quantity > 0 && newItems[index].isSelected) {
             newItems[index].quantity--;
+            price = price + newItems[index].price;
         }
-
+        setTotalPrice(totalPrice - price);
         setItems(newItems);
     };
 
@@ -73,19 +77,27 @@ export default function Restaurant() {
                 }}>
                     Menu
                 </Typography>
+                <Typography sx={{
+                    fontSize: 20,
+                    marginTop: 6,
+                    fontWeight: 10,
+                    color: 'black'
+                }}>
+                    Total Price - Rs.{totalPrice}
+                </Typography>
                 <div className='item-list'>
                     {items.map((item, index) => (
-                        <div className='item-container'>
+                        <div className='item-container' key = {index}>
                             <div className='item-name' onClick={() => toggleComplete(index)}>
                                 {item.isSelected ? (
                                     <>
                                         <FontAwesomeIcon icon={faCheckCircle} />
-                                        <span className='completed'>{item.name}</span>
+                                        <span className='completed'>{`${item.name} - Rs.${item.price}`}</span>
                                     </>
                                 ) : (
                                     <>
                                         <FontAwesomeIcon icon={faCircle} />
-                                        <span>{item.name}</span>
+                                        <span>{`${item.name} - Rs.${item.price}`}</span>
                                     </>
                                 )}
                             </div>

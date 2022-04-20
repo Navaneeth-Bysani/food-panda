@@ -5,12 +5,14 @@ import SignUp from './pages/signup/SignUp';
 import Home from './pages/home/Home';
 import VendorHome from './pages/vendorHome/VendorHome';
 import Restaurant from './pages/restaurant/Restaurant';
+import LandingPage from './pages/landingpage/LandingPage';
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
+          <Route exact path='/' element = {<LandingPage />} />
           <Route exact path='/signin' element={<SignIn />} />
           <Route exact path='/signup' element={<SignUp />} />
           <Route exact path='/home' element={<Home />} />
