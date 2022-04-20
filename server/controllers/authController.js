@@ -10,15 +10,15 @@ const JWT_EXPIRES_IN = '90d';
 const JWT_COOKIE_EXPIRES_IN = 90;
 const NODE_ENV = 'development';
 
-const signToken = id => {
-    return jwt.sign({ id: id }, JWT_SECRET, {
+const signToken = (id, isVendor) => {
+    return jwt.sign({ id: id, isVendor: isVendor }, JWT_SECRET, {
         expiresIn: JWT_EXPIRES_IN
     });
 }
 
-const createSendToken = (user, statusCode, res) => {
-    const token = signToken(user[4]);
-
+const createSendToken = (user, statusCode, res, isVendor) => {
+    const token = signToken(user.ID, isVendor);
+    console.log(user);
     const cookieOptions = {
         expires: new Date(Date.now() + JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
         httpOnly: true
@@ -31,9 +31,10 @@ const createSendToken = (user, statusCode, res) => {
     res.status(statusCode).json({
         status: "success",
         user: {
-            email: user[0],
-            name: user[1],
-            id: user[4]
+            email: user.EMAIL,
+            name: user.NAME,
+            phone: user.PHONE,
+            id: user.ID
         },
         token
     })
@@ -60,7 +61,7 @@ exports.verifyJwtToken = async (req, res, next) => {
 
     req.jwtPayload = {
         id: decoded.id,
-        role: decoded.role,
+        isVendor: decoded.isVendor,
     };
     next();
 }
@@ -71,15 +72,24 @@ exports.loggedInUser = async (req, res, next) => {
         req.jwtPayload.id
     ];
 
+
     try {
-        let currentUser = await connection.execute(findUserById, userDetails);
+        let currentUser;
+        if (req.jwtPayload.isVendor === false) {
+            currentUser = await connection.execute(findUserById, userDetails, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        } else {
+            currentUser = await connection.execute(`SELECT * FROM restaurants WHERE id = :id`, userDetails,
+                { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        }
+
         let user = currentUser.rows[0];
         if (currentUser.rows.length !== 0) {
             req.user = {
-                email: user[0],
-                name: user[1],
-                phone: user[2],
-                id: user[4]
+                email: user.EMAIL,
+                name: user.NAME,
+                phone: user.PHONE,
+                id: user.ID,
+                isVendor: req.jwtPayload.isVendor
             };
 
             next();
@@ -123,9 +133,11 @@ exports.login = async (req, res, next) => {
     ];
 
     try {
-        let user = await connection.execute(loginQuery, userDetails);
+        let user = await connection.execute(loginQuery, userDetails, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+
         if (user.rows.length !== 0) {
-            createSendToken(user.rows[0], 200, res);
+
+            createSendToken(user.rows[0], 200, res, false);
             // res.status(201).json({
             //     status : 'success',
             //     message : 'user exists',
@@ -163,7 +175,7 @@ exports.login = async (req, res, next) => {
 
 exports.signup = async (req, res, next) => {
     const connection = await oracledb.getConnection(dbConfig);
-    const userDetails = [
+    let userDetails = [
         req.body.email,
         req.body.name,
         req.body.phone,
@@ -171,12 +183,31 @@ exports.signup = async (req, res, next) => {
     ];
 
     try {
-        let user = await connection.execute(signupQuery, userDetails, { autoCommit: true });
+        let user = await connection.execute(signupQuery, {
+            email: req.body.email,
+            name: req.body.name,
+            phone: req.body.phone,
+            password: req.body.password,
+            ids: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT }
+        }, { autoCommit: true });
 
-        res.status(201).json({
-            status: 'success',
-            user
-        })
+        userDetails = [
+            req.body.email,
+            req.body.password
+        ]
+
+        user = await connection.execute(loginQuery, userDetails, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+
+        if (user.rows.length !== 0) {
+
+            createSendToken(user.rows[0], 200, res, false);
+
+        } else {
+            res.status(400).json({
+                status: 'failed',
+                message: 'either the email or the password is wrong'
+            })
+        }
     } catch (err) {
         // console.error(err);
         if (err.errorNum === 1) {
@@ -200,23 +231,32 @@ exports.signup = async (req, res, next) => {
 
 exports.signupVendor = async (req, res, next) => {
     const connection = await oracledb.getConnection(dbConfig);
-    const vendorDetails = [
-        req.body.name,
-        req.body.id,
-        req.body.email,
-        req.body.password,
-        req.body.description,
-        req.body.phone,
-    ];
-    try {
-        let vendor = await connection.execute(vendorSignUpQuery, vendorDetails, { autoCommit: true });
 
-        res.status(201).json({
-            status: 'success',
-            vendor
-        })
+    try {
+        let vendor = await connection.execute(vendorSignUpQuery, {
+            name: req.body.name,
+            id: req.body.id,
+            email: req.body.email,
+            password: req.body.password,
+            description: req.body.description,
+            phone: req.body.phone,
+            ids: { type: oracledb.DB_TYPE_VARCHAR, dir: oracledb.BIND_OUT }
+        }, { autoCommit: true });
+
+
+        vendor = await connection.execute(`SELECT * FROM restaurants WHERE id = :id`, vendor.outBinds.ids, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+
+        if (vendor.rows.length !== 0) {
+            createSendToken(vendor.rows[0], 200, res, true);
+        } else {
+            res.status(400).json({
+                status: 'failed',
+                message: 'either the email or the password is wrong'
+            })
+        }
+
     } catch (err) {
-        // console.error(err);
+
         if (err.errorNum === 1) {
             console.error('unique constraint is violated');
             res.status(400).json({
@@ -224,6 +264,8 @@ exports.signupVendor = async (req, res, next) => {
                 message: 'already have an account. try login!'
             });
             next();
+        } else {
+            console.error(err);
         }
     } finally {
         if (connection) {
@@ -244,14 +286,10 @@ exports.loginVendor = async (req, res, next) => {
     ];
 
     try {
-        let vendor = await connection.execute(vendorLoginQuery, vendorDetails);
+        let vendor = await connection.execute(vendorLoginQuery, vendorDetails, { outFormat: oracledb.OUT_FORMAT_OBJECT });
 
         if (vendor.rows.length !== 0) {
-            res.status(201).json({
-                status: 'success',
-                message: 'vendor exists',
-                vendor
-            })
+            createSendToken(vendor.rows[0], 200, res, true);
         } else {
             res.status(400).json({
                 status: 'failed',
