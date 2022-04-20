@@ -57,10 +57,17 @@ exports.getOneRestaurant = async (req, res, next) => {
 }
 
 exports.getAllItems = async (req, res, next) => {
-    const rid = req.params.rid;
+    let rId;
+    if(req.params.rid) {
+        rId = req.params.rid;
+    } else {
+        rId = req.user.id;
+    }
+    
     const restaurantDetails = [
-        rid
+        rId
     ];
+    
 
     const connection = await oracledb.getConnection(dbConfig);
     try {
@@ -91,6 +98,12 @@ exports.addItem = async (req, res, next) => {
         req.body.name,
         req.body.price
     ];
+    if(rid !== req.user.id) {
+        res.status(401).json({
+            status : 'You are not allowed to do this'
+        })
+        return;
+    }
 
     try {
         let item = await connection.execute(addItemQuery, {
