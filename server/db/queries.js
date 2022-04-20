@@ -157,7 +157,8 @@ const getOrderedItems = `
             SELECT * FROM ordersList WHERE orderId = :oid
 `;
 
-
+//delete queries
+const deleteItemQuery = `DELETE FROM items where id = :itemId AND rId = :restaurantId`;
 
 module.exports = {
     createUserTable,
@@ -180,5 +181,6 @@ module.exports = {
     ordersFromRestaurantQuery,
     createOrderedItemsTable,
     insertOrderItem,
-    getOrderedItems
+    getOrderedItems,
+    deleteItemQuery
 };

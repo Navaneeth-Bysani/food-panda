@@ -2,7 +2,8 @@ const {
     getAllRestaurants, 
     addItemQuery, 
     getAllItemsQuery, 
-    ordersFromRestaurantQuery
+    ordersFromRestaurantQuery,
+    deleteItemQuery
 } = require('./../db/queries');
 
 const oracledb = require('oracledb');
@@ -147,3 +148,33 @@ exports.getAllOrders = async(req,res,next) => {
     }
 }
 
+exports.deleteItem = async (req,res,next) => {
+    const connection = await oracledb.getConnection(dbConfig);
+    try {
+        const itemDetails = [
+            req.params.id,
+            req.user.id
+        ];
+        
+        let deletedItem = await connection.execute(deleteItemQuery, itemDetails, {autoCommit : true});
+        if(!deleteItem) {
+            res.status(404).json({
+                message : 'can not find the item in the restaurant'
+            })
+        }
+        res.status(200).json({
+            status : 'success',
+            deletedItem
+        })
+    } catch (err) {
+        console.error(err);
+    } finally {
+        if (connection) {
+            try {
+              await connection.close();
+            } catch (err) {
+              console.error(err);
+            }
+        }
+    }
+} 
