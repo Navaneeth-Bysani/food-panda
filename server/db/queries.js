@@ -163,6 +163,11 @@ const getOrderedItems = `
             WHERE orderId = :oid
 `;
 
+const getAllUserOrdersQuery = `
+            SELECT * FROM orders
+            WHERE userId = :userID AND isCompleted = 'NO'
+`;
+
 //delete queries
 const deleteItemQuery = `DELETE FROM items where id = :itemId AND rId = :restaurantId`;
 
@@ -196,5 +201,6 @@ module.exports = {
     insertOrderItem,
     getOrderedItems,
     deleteItemQuery,
-    updateItemQuery
+    updateItemQuery,
+    getAllUserOrdersQuery
 };
