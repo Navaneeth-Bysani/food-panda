@@ -18,7 +18,7 @@ export default function Home() {
 
     useEffect(() => {
 
-        axios.get('http://localhost:4000/restaurants').then(result => {
+        axios.get('http://localhost:4000/restaurants', { withCredentials: true }).then(result => {
             setrestaurants(result.data.vendors);
             console.log(result);
         })
@@ -50,7 +50,7 @@ export default function Home() {
                 >
                     {restaurants ?
                         restaurants.slice(0, 2).map((restaurant, index) => {
-                            return (<VendorCard rest={restaurant} key = {index} />)
+                            return (<VendorCard rest={restaurant} key={index} />)
                         }) : null
                     }
                 </Box>
@@ -65,7 +65,7 @@ export default function Home() {
                 >
                     {restaurants ?
                         restaurants.slice(2, 4).map((restaurant, index) => {
-                            return (<VendorCard rest={restaurant} key = {index}/>)
+                            return (<VendorCard rest={restaurant} key={index} />)
                         }) : null
                     }
                 </Box>
@@ -87,9 +87,9 @@ export default function Home() {
                         justifyContent: 'center'
                     }}
                 >
-                    <VendorCard key = {1} />
-                    <VendorCard key = {2}/>
-                    <VendorCard key = {3} />
+                    <VendorCard key={1} />
+                    <VendorCard key={2} />
+                    <VendorCard key={3} />
                 </Box>
             </Container>
         </ThemeProvider>

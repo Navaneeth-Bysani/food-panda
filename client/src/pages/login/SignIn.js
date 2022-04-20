@@ -14,6 +14,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useCookies } from 'react-cookie';
 import './signin.css';
 
 const theme = createTheme();
@@ -22,6 +23,8 @@ export default function SignIn() {
 
   const [username, setusername] = useState("")
   const [password, setpassword] = useState("")
+  const [cookies, setCookie] = useCookies(['jwt']);
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -31,10 +34,11 @@ export default function SignIn() {
       password: password,
     });
     axios.post('http://localhost:4000/auth/login', {
-      email : username,
-      password : password
+      email: username,
+      password: password
     }).then(result => {
       console.log(result);
+      setCookie('jwt', result.data.token, { path: '/' });
     })
   };
 

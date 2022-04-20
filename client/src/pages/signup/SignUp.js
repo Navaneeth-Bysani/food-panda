@@ -14,6 +14,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState } from 'react';
+import { useCookies } from 'react-cookie';
 import './signup.css';
 
 const theme = createTheme();
@@ -24,18 +25,20 @@ export default function SignUp() {
     const [password, setpassword] = useState("")
     const [name, setname] = useState("")
     const [contact, setcontact] = useState("")
+    const [cookies, setCookie] = useCookies(['jwt']);
 
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        
+
         axios.post('http://localhost:4000/auth/signup', {
-            email : email,
-            password : password,
-            name : name,
-            phone : contact
+            email: email,
+            password: password,
+            name: name,
+            phone: contact
         }).then(result => {
             console.log(result);
+            setCookie('jwt', result.data.token, { path: '/' });
         })
     };
 
