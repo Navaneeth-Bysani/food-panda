@@ -5,3 +5,16 @@
     background: #9C27B0;
     color: white;
 }
+
+.logout {
+    display: flex;
+    flex-direction: row-reverse;
+    margin-right: 30px;
+    margin-top: 20px;
+    color: #9C27B0;
+    font-weight: 600;
+}
+
+.logout p {
+    cursor: pointer;
+}

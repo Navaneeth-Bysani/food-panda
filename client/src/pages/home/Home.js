@@ -8,6 +8,7 @@ import Card from '@mui/material/Card';
 import { Button, CardActions, CardContent, makeStyles, Typography } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useCookies } from 'react-cookie';
 
 const theme = createTheme();
 
@@ -15,19 +16,39 @@ const theme = createTheme();
 export default function Home() {
 
     const [restaurants, setrestaurants] = useState([])
+    const [cookies, setCookie, removeCookie] = useCookies(['jwt']);
+    const navigate = useNavigate()
 
     useEffect(() => {
+
+        const jwt = cookies.jwt
+        if (!jwt) {
+            navigate('/signin')
+        }
 
         axios.get('http://localhost:4000/restaurants', { withCredentials: true }).then(result => {
             setrestaurants(result.data.vendors);
             console.log(result);
         })
+        // const cook = cookies.get('jwt')
+        console.log(cookies.jwt)
+
     }, [])
+
+    const logout = () => {
+        removeCookie('jwt')
+        navigate('/signin')
+    }
 
     return (
         <ThemeProvider theme={theme}>
             <div className="title">
                 Hungry Bird
+            </div>
+            <div className='logout' onClick={() => {
+                logout()
+            }}>
+                <p>Logout</p>
             </div>
             <Container component="main">
                 <CssBaseline />

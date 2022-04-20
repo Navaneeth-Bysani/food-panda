@@ -13,8 +13,9 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
 import './signup.css';
 
 const theme = createTheme();
@@ -26,6 +27,17 @@ export default function SignUp() {
     const [name, setname] = useState("")
     const [contact, setcontact] = useState("")
     const [cookies, setCookie] = useCookies(['jwt']);
+    const navigate = useNavigate()
+
+
+    useEffect(() => {
+
+        const jwt = cookies.jwt
+        if (jwt) {
+            navigate('/home')
+        }
+
+    }, [])
 
     const handleSubmit = (event) => {
         event.preventDefault();

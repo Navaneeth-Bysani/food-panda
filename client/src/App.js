@@ -1,4 +1,5 @@
 import './App.css';
+import { useState, useEffect } from 'react';
 import SignIn from './pages/login/SignIn';
 import { BrowserRouter, Routes, Route, Switch, Router } from 'react-router-dom';
 import SignUp from './pages/signup/SignUp';
@@ -6,9 +7,13 @@ import Home from './pages/home/Home';
 import VendorHome from './pages/vendorHome/VendorHome';
 import Restaurant from './pages/restaurant/Restaurant';
 import LandingPage from './pages/landingpage/LandingPage';
-import { CookiesProvider } from 'react-cookie';
+import { CookiesProvider, get, useCookies } from 'react-cookie';
+
+export let JWTTOKEN = null;
+
 
 function App() {
+
   return (
     <div className="App">
       <CookiesProvider>
