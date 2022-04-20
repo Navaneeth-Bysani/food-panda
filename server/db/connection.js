@@ -18,6 +18,7 @@ const connFunc = async () => {
         
         
         try {
+            // await connection.execute(`ALTER TABLE ordersList RENAME COLUMN quanitity to quantity`);
             await connection.execute(createOrderTable);
             await connection.execute(createOrderedItemsTable);
             await connection.execute(createOrderSequence);

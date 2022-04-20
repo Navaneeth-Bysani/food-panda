@@ -19,7 +19,7 @@ import './landingpage.css';
 
 const theme = createTheme();
 
-export default function SignIn() {
+export default function Landingpage() {
     const navigate = useNavigate();
     return (
         <ThemeProvider theme={theme}>

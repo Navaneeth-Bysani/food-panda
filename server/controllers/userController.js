@@ -74,10 +74,18 @@ exports.getOrderDetails = async (req, res, next) => {
 
     try {
         let orderedItems = await connection.execute(getOrderedItems, orderDetails, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        let order = null;
+        if (orderedItems.rows.length !== 0) {
+            order = {
+                orderId: req.params.oid,
+                items: orderedItems.rows
+            }
+        }
+
 
         res.status(201).json({
             status: 'success',
-            orderedItems
+            order
         })
     } catch (err) {
         console.error(err);

@@ -32,6 +32,28 @@ exports.getAllRestaurants = async (req, res, next) => {
     }
 }
 
+exports.getOneRestaurant = async (req, res, next) => {
+    const connection = await oracledb.getConnection(dbConfig);
+    try {
+        let vendor = (await connection.execute(`SELECT name, description, email, phone FROM restaurants WHERE id = :rId`, [req.params.rId])).rows;
+
+        res.status(201).json({
+            status: 'success',
+            vendor
+        })
+    } catch (err) {
+        console.error(err);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    }
+}
+
 exports.getAllItems = async (req, res, next) => {
     const rid = req.params.rid;
     const restaurantDetails = [
@@ -151,13 +173,18 @@ exports.getAllOrders = async (req, res, next) => {
 exports.deleteItem = async (req,res,next) => {
     const connection = await oracledb.getConnection(dbConfig);
     try {
+        if(!req.user) {
+            req.user = {
+                id : 'restaurant-01'
+            }
+        }
         const itemDetails = [
             req.params.id,
             req.user.id
         ];
         
         let deletedItem = await connection.execute(deleteItemQuery, itemDetails, {autoCommit : true});
-        if(!deleteItem) {
+        if(!deletedItem) {
             res.status(404).json({
                 message : 'can not find the item in the restaurant'
             })
