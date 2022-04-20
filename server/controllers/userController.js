@@ -1,4 +1,4 @@
-const { getAllUsersQuery, placeOrderQuery, insertOrderItem, getOrderedItems } = require('./../db/queries');
+const { getAllUsersQuery, placeOrderQuery, insertOrderItem, getOrderedItems, getAllUserOrdersQuery } = require('./../db/queries');
 const oracledb = require('oracledb');
 const dbConfig = require('./../db/dbConfig');
 
@@ -28,11 +28,6 @@ exports.placeOrder = async (req, res, next) => {
     const connection = await oracledb.getConnection(dbConfig);
 
     const orderedItems = req.body.items;
-    if (!req.user) {
-        req.user = {
-            id: 1
-        };
-    }
     console.log(req.user);
     try {
         let order = await connection.execute(placeOrderQuery, {
@@ -41,7 +36,7 @@ exports.placeOrder = async (req, res, next) => {
             ids: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT }
         }, { autoCommit: true });
         const order_id = order.outBinds.ids[0];
-
+        
         orderedItems.forEach(item => {
             connection.execute(insertOrderItem, [
                 order_id,
@@ -52,7 +47,8 @@ exports.placeOrder = async (req, res, next) => {
 
         res.status(201).json({
             status: 'success',
-            order
+            order,
+            orderId : order_id
         })
     } catch (err) {
         console.error(err);
@@ -87,6 +83,39 @@ exports.getOrderDetails = async (req, res, next) => {
         res.status(201).json({
             status: 'success',
             order
+        })
+    } catch (err) {
+        console.error(err);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    }
+}
+
+exports.getAllUserOrders = async (req,res,next) => {
+    const connection = await oracledb.getConnection(dbConfig);
+    const userDetails = [
+        req.user.id
+    ];
+
+    try {
+        let userPendingOrders = await connection.execute(getAllUserOrdersQuery, userDetails, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        let userOrders = null;
+        if (userPendingOrders.rows.length !== 0) {
+            userOrders = {
+                userId: req.user.id,
+                orders: userPendingOrders.rows
+            }
+        }
+
+        res.status(201).json({
+            status: 'success',
+            userOrders
         })
     } catch (err) {
         console.error(err);

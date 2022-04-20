@@ -163,6 +163,14 @@ const getOrderedItems = `
             WHERE orderId = :oid
 `;
 
+const getAllUserOrdersQuery = `
+            SELECT orders.id, orders.order_time, restaurants.name FROM orders
+            LEFT JOIN restaurants
+            ON orders.rid = restaurants.id
+            WHERE orders.userId = :userID AND orders.isCompleted = 'NO'
+            ORDER BY orders.order_time ASC
+`;
+
 //delete queries
 const deleteItemQuery = `DELETE FROM items where id = :itemId AND rId = :restaurantId`;
 
@@ -196,5 +204,6 @@ module.exports = {
     insertOrderItem,
     getOrderedItems,
     deleteItemQuery,
-    updateItemQuery
+    updateItemQuery,
+    getAllUserOrdersQuery
 };
