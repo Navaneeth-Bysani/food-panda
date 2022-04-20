@@ -26,7 +26,8 @@ const createItemsTable = `
             id NUMBER PRIMARY KEY,
             rId VARCHAR(20),
             name VARCHAR(20),
-            price NUMBER
+            price NUMBER,
+            FOREIGN KEY (rId) REFERENCES restaurants(id)
         )
 `;
 
@@ -46,7 +47,8 @@ const createOrderedItemsTable = `
         CREATE TABLE ordersList (
             orderId NUMBER,
             itemId NUMBER,
-            quanitity NUMBER
+            quantity NUMBER,
+            FOREIGN KEY(itemId) REFERENCES items(id)
         )
 `;
 
@@ -154,7 +156,10 @@ const ordersFromRestaurantQuery = `
 `;
 
 const getOrderedItems = `
-            SELECT * FROM ordersList WHERE orderId = :oid
+            SELECT items.name, ordersList.quantity, items.price FROM ordersList 
+            LEFT JOIN items
+            on ordersList.itemId = items.id
+            WHERE orderId = :oid
 `;
 
 //delete queries

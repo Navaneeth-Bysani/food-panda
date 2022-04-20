@@ -151,13 +151,18 @@ exports.getAllOrders = async (req, res, next) => {
 exports.deleteItem = async (req,res,next) => {
     const connection = await oracledb.getConnection(dbConfig);
     try {
+        if(!req.user) {
+            req.user = {
+                id : 'restaurant-01'
+            }
+        }
         const itemDetails = [
             req.params.id,
             req.user.id
         ];
         
         let deletedItem = await connection.execute(deleteItemQuery, itemDetails, {autoCommit : true});
-        if(!deleteItem) {
+        if(!deletedItem) {
             res.status(404).json({
                 message : 'can not find the item in the restaurant'
             })
