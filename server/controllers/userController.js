@@ -30,13 +30,13 @@ exports.placeOrder = async (req, res, next) => {
     const orderedItems = req.body.items;
     if (!req.user) {
         req.user = {
-            id: 1
+            id: 21
         };
     }
     try {
         let order = await connection.execute(placeOrderQuery, {
             userId: req.user.id,
-            rid: req.params.id,
+            rid: req.params.rid,
             ids: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT }
         }, { autoCommit: true });
         const order_id = order.outBinds.ids[0];

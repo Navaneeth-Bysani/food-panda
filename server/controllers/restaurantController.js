@@ -157,7 +157,7 @@ exports.getAllOrders = async (req, res, next) => {
     try {
 
         let orders = await connection.execute(`SELECT * FROM orders`);
-
+        // console.log(orders);
         res.status(201).json({
             status: 'success',
             orders
