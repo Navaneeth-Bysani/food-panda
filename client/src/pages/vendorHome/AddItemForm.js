@@ -25,16 +25,8 @@ export default function AddItem(props) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(name, price);
-        const restaurantName = 'restaurant-01';
-        axios.post(`http://localhost:4000/restaurants/items/${restaurantName}`, {
-            name : name,
-            price : price
-        }).then(result => {
-            if(result.status === "success") {
-                // props.handleClose;
-            }
-        })
+        props.handleSubmit(name, price);
+        return;
     }
     return (
         <Modal

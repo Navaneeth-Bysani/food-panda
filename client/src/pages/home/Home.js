@@ -49,8 +49,8 @@ export default function Home() {
                     }}
                 >
                     {restaurants ?
-                        restaurants.slice(0, 2).map((restaurant) => {
-                            return (<VendorCard rest={restaurant} key = {restaurant[1]} />)
+                        restaurants.slice(0, 2).map((restaurant, index) => {
+                            return (<VendorCard rest={restaurant} key = {index} />)
                         }) : null
                     }
                 </Box>
@@ -64,8 +64,8 @@ export default function Home() {
                     }}
                 >
                     {restaurants ?
-                        restaurants.slice(2, 4).map((restaurant) => {
-                            return (<VendorCard rest={restaurant} />)
+                        restaurants.slice(2, 4).map((restaurant, index) => {
+                            return (<VendorCard rest={restaurant} key = {index}/>)
                         }) : null
                     }
                 </Box>
@@ -87,9 +87,9 @@ export default function Home() {
                         justifyContent: 'center'
                     }}
                 >
-                    <VendorCard />
-                    <VendorCard />
-                    <VendorCard />
+                    <VendorCard key = {1} />
+                    <VendorCard key = {2}/>
+                    <VendorCard key = {3} />
                 </Box>
             </Container>
         </ThemeProvider>

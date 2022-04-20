@@ -23,12 +23,10 @@ export default function Restaurant() {
                 itemsArr.push({
                     ID: item.ID,
                     name: item.NAME,
-                    quantity: 0,
-                    price : item.PRICE,
-                    isSelected: false
+                    price : item.PRICE
                 })
             })
-            console.log(itemsArr)
+            
             setItems(itemsArr)
         })
     }, [])
@@ -49,8 +47,25 @@ export default function Restaurant() {
         })
     };
 
-    const addItem = () => {
+    const addItem = (name, price) => {
         const restName = 'restaurant-01';
+        axios.post(`http://localhost:4000/restaurants/items/${restName}`, {
+            name : name,
+            price : price
+        }).then(result => {
+            console.log(result);
+            if(result.data.status === "success") {
+                let newItems = [...items];
+                newItems.push({
+                    ID : result.data.item.outBinds.ids[0],
+                    name : name,
+                    price : price
+                });
+                setModalOpen(false);
+                setItems(newItems);
+                
+            }
+        })
     }
 
     return (
@@ -58,7 +73,7 @@ export default function Restaurant() {
             <div className="title">
                 Hungry Bird
             </div>
-            <AddItemModal modalOpen = {modalOpen} handleClose = {() => setModalOpen(false)}/>
+            <AddItemModal modalOpen = {modalOpen} handleClose = {() => setModalOpen(false)} handleSubmit = {addItem}/>
             <Container component="main">
                 <CssBaseline />
                 <Typography sx={{
@@ -100,17 +115,6 @@ export default function Restaurant() {
                         </div>
                     ))}
                 </div>
-                <Button sx={{
-                    marginTop: 5,
-                    marginBottom: 5,
-                    fontSize: 20,
-                    background: '#9C27B0',
-                    color: '#FFFFFF'
-                }} onClick={() => {
-                    console.log(items)
-                }}>
-                    Order
-                </Button>
             </Container>
         </ThemeProvider>
     )

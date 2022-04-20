@@ -102,6 +102,7 @@ const addItemQuery = `
                 :name,
                 :price
             )
+            RETURNING id INTO :ids
 `;
 
 const placeOrderQuery = `

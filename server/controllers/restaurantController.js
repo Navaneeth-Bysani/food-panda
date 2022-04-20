@@ -91,7 +91,12 @@ exports.addItem = async (req, res, next) => {
     ];
 
     try {
-        let item = await connection.execute(addItemQuery, itemDetails, { autoCommit: true });
+        let item = await connection.execute(addItemQuery, {
+            rid : rid,
+            name : req.body.name,
+            price : req.body.price,
+            ids : {type : oracledb.NUMBER, dir : oracledb.BIND_OUT}
+        }, { autoCommit: true });
 
         res.status(201).json({
             status: 'success',
