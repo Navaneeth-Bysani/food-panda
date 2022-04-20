@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faChevronLeft, faCircle, faCheckCircle, faPlus } from '@fortawesome/free-solid-svg-icons';
 import './restaurant.css'
 import { fontSize } from "@mui/system";
+import OrderModal from "./ordermodal/OrderModal";
 
 const theme = createTheme();
 
@@ -14,8 +15,21 @@ export default function Restaurant() {
     let { rId } = useParams()
     const [items, setItems] = useState([])
     const [totalPrice, setTotalPrice] = useState(0);
+    const [showOrderModal, setshowOrderModal] = useState(false)
+
+    const showOrderModalOnClick = () => {
+        setshowOrderModal(true)
+    }
+
+    const closeOrderModalOnClick = () => {
+        setshowOrderModal(false)
+    }
 
     useEffect(() => {
+        getItems()
+    }, [])
+
+    const getItems = () => {
         axios.get('http://localhost:4000/restaurants/items/' + rId).then(result => {
             let itemsArr = []
             result.data.items.rows.map((item) => {
@@ -23,20 +37,29 @@ export default function Restaurant() {
                     ID: item.ID,
                     name: item.NAME,
                     quantity: 0,
-                    price : item.PRICE,
+                    price: item.PRICE,
                     isSelected: false
                 })
             })
             console.log(itemsArr)
             setItems(itemsArr)
         })
-    }, [])
-
+    }
     const toggleComplete = (index) => {
         const newItems = [...items];
+        let price = totalPrice
+        if (newItems[index].isSelected) {
+            newItems[index].isSelected = !newItems[index].isSelected;
+            price = price - newItems[index].quantity * newItems[index].price
+            newItems[index].quantity = 0
+        } else {
+            newItems[index].isSelected = !newItems[index].isSelected;
+            newItems[index].quantity = 1
+            price = price + newItems[index].quantity * newItems[index].price
+        }
 
-        newItems[index].isSelected = !newItems[index].isSelected;
 
+        setTotalPrice(price)
         setItems(newItems);
     };
 
@@ -62,8 +85,37 @@ export default function Restaurant() {
         setItems(newItems);
     };
 
+    const orderFood = () => {
+        const orderedItems = []
+        items.map((item, index) => {
+            if (item.isSelected) {
+                orderedItems.push({
+                    itemId: item.ID,
+                    quantity: item.quantity
+                })
+            }
+        })
+        console.log(orderedItems);
+        axios.post('http://localhost:4000/users/order/' + rId, {
+            items: orderedItems
+        }).then(result => {
+            console.log("Hi")
+            console.log(result)
+            setItems([])
+            getItems()
+            setTotalPrice(0)
+            closeOrderModalOnClick()
+        })
+    }
+
     return (
         <ThemeProvider theme={theme}>
+            <OrderModal
+                show={showOrderModal}
+                close={closeOrderModalOnClick}
+                orderFood={orderFood}
+                items={items}
+            />
             <div className="title">
                 Hungry Bird
             </div>
@@ -71,7 +123,17 @@ export default function Restaurant() {
                 <CssBaseline />
                 <Typography sx={{
                     fontSize: 28,
-                    marginTop: 6,
+                    marginTop: 4,
+                    fontWeight: 600,
+                    display: 'flex',
+                    textAlign: 'left',
+                    color: '#9C27B0'
+                }}>
+                    {"Restaurant - " + rId}
+                </Typography>
+                <Typography sx={{
+                    fontSize: 28,
+                    marginTop: 2,
                     fontWeight: 600,
                     color: '#9C27B0'
                 }}>
@@ -87,7 +149,7 @@ export default function Restaurant() {
                 </Typography>
                 <div className='item-list'>
                     {items.map((item, index) => (
-                        <div className='item-container' key = {index}>
+                        <div className='item-container' key={index}>
                             <div className='item-name' onClick={() => toggleComplete(index)}>
                                 {item.isSelected ? (
                                     <>
@@ -120,7 +182,7 @@ export default function Restaurant() {
                     background: '#9C27B0',
                     color: '#FFFFFF'
                 }} onClick={() => {
-                    console.log(items)
+                    showOrderModalOnClick()
                 }}>
                     Order
                 </Button>

@@ -1,0 +1,43 @@
+.orderModalContainer {
+    width: 350px;
+}
+
+.items_list {
+    display: flex;
+    flex-direction: column;
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+.item {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+
+.items_list p {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.headings {
+    margin-right: 30px;
+    margin-left: 30px;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.closeButton {
+    color: "#9C27B0";
+}
+
+.buttons {
+    margin-top: 30px;
+}
+
+.buttons p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    color: white;
+}
