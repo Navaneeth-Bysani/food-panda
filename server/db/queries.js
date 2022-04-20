@@ -164,8 +164,11 @@ const getOrderedItems = `
 `;
 
 const getAllUserOrdersQuery = `
-            SELECT * FROM orders
-            WHERE userId = :userID AND isCompleted = 'NO'
+            SELECT orders.id, orders.order_time, restaurants.name FROM orders
+            LEFT JOIN restaurants
+            ON orders.rid = restaurants.id
+            WHERE orders.userId = :userID AND orders.isCompleted = 'NO'
+            ORDER BY orders.order_time ASC
 `;
 
 //delete queries
