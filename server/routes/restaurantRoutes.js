@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const restaurantController = require('./../controllers/restaurantController');
-const {verifyJwtToken, loggedInUser} = require('./../controllers/authController');
+const { verifyJwtToken, loggedInUser } = require('./../controllers/authController');
 
 router.get('/', restaurantController.getAllRestaurants);
 router.get('/items/:rid', restaurantController.getAllItems);

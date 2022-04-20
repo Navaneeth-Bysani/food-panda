@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Switch, Router } from 'react-router-dom';
 import SignUp from './pages/signup/SignUp';
 import Home from './pages/home/Home';
 import VendorHome from './pages/vendorHome/VendorHome';
+import Restaurant from './pages/restaurant/Restaurant';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route exact path='/signup' element={<SignUp />} />
           <Route exact path='/home' element={<Home />} />
           <Route exact path='/vendor-home' element={<VendorHome />} />
+          <Route exact path='/restaurant/:rId' element={<Restaurant />} />
           {/* <SignIn /> */}
         </Routes>
       </BrowserRouter>
