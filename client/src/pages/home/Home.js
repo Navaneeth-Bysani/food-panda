@@ -30,8 +30,10 @@ export default function Home() {
             setrestaurants(result.data.vendors);
             console.log(result);
         }).catch(err => console.log(err))
-        // const cook = cookies.get('jwt')
-        console.log(cookies.jwt)
+
+        axios.get('http://localhost:4000/users/orders', { withCredentials: true }).then(result => {
+            console.log(result);
+        }).catch(err => console.log(err))
 
     }, [])
 
