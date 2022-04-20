@@ -166,6 +166,13 @@ const getOrderedItems = `
 //delete queries
 const deleteItemQuery = `DELETE FROM items where id = :itemId AND rId = :restaurantId`;
 
+//update queries
+const updateItemQuery = `
+            UPDATE items 
+            SET name = :name , price = :price
+            WHERE id = :id AND rId = :rid
+`;
+
 module.exports = {
     createUserTable,
     signupQuery,
@@ -188,5 +195,6 @@ module.exports = {
     createOrderedItemsTable,
     insertOrderItem,
     getOrderedItems,
-    deleteItemQuery
+    deleteItemQuery,
+    updateItemQuery
 };

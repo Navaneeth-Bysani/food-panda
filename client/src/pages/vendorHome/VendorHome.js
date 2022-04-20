@@ -4,10 +4,11 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 import { Button, Container, CssBaseline, Typography, Box } from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronRight, faChevronLeft, faCircle, faCheckCircle, faPlus, faTrash, faAdd } from '@fortawesome/free-solid-svg-icons';
+import { faChevronRight, faChevronLeft, faCircle, faCheckCircle, faPlus, faTrash, faAdd, faPen } from '@fortawesome/free-solid-svg-icons';
 import './vendorHome.css'
 import { fontSize } from "@mui/system";
 import AddItemModal from './AddItemForm';
+import UpdateItemModal from './UpdateItem';
 
 const theme = createTheme();
 
@@ -15,6 +16,12 @@ export default function Restaurant() {
     let { rId } = useParams()
     const [items, setItems] = useState([])
     const [modalOpen, setModalOpen] = useState(false);
+    const [updating, setUpdating] = useState(false);
+    const [updatingItem, setUpdatingItem] = useState({
+        id : -1,
+        name : "",
+        price : 0
+    });
 
     useEffect(() => {
         axios.get('http://localhost:4000/restaurants/items/' + 'restaurant-01').then(result => {
@@ -47,6 +54,31 @@ export default function Restaurant() {
         })
     };
 
+    const handleUpdate = (itemId, index) => {
+        setUpdatingItem({
+            id : itemId,
+            name : items[index].name,
+            price : items[index].price,
+            index : index
+        });
+        setUpdating(true);
+    }
+
+    const updateItem = (name, price, id, index) => {
+        axios.patch(`http://localhost:4000/restaurants/items/${id}`, {
+            name : name,
+            price : price
+        }).then(result => {
+            if(result.data.status === "success") {
+                let newItems = items;
+                newItems[index].name = name;
+                newItems[index].price = price;
+                setItems(newItems);
+                setUpdating(false);
+            }
+        })
+    }
+
     const addItem = (name, price) => {
         const restName = 'restaurant-01';
         axios.post(`http://localhost:4000/restaurants/items/${restName}`, {
@@ -74,6 +106,10 @@ export default function Restaurant() {
                 Hungry Bird
             </div>
             <AddItemModal modalOpen = {modalOpen} handleClose = {() => setModalOpen(false)} handleSubmit = {addItem}/>
+            {updating ? (<UpdateItemModal modalOpen = {updating} handleClose = {() => setUpdating(false)} 
+            handleSubmit = {updateItem} item = {updatingItem}
+            /> ): null}
+            
             <Container component="main">
                 <CssBaseline />
                 <Typography sx={{
@@ -104,6 +140,14 @@ export default function Restaurant() {
                                 <span className='completed'>{`${item.name} - Rs.${item.price}`}</span>
                             </div>
                             <div>
+                                <button>
+                                    <FontAwesomeIcon 
+                                    icon={faPen} 
+                                    onClick={() => handleUpdate(item.ID, index)} 
+                                    style = {{size : '20px'}}
+                                    />
+                                </button>
+                                {'  '}
                                 <button>
                                     <FontAwesomeIcon 
                                     icon={faTrash} 
