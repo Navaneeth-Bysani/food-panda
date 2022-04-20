@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -14,6 +14,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
 import './signin.css';
 
 const theme = createTheme();
@@ -22,6 +24,19 @@ export default function SignIn() {
 
   const [username, setusername] = useState("")
   const [password, setpassword] = useState("")
+  const [cookies, setCookie] = useCookies(['jwt']);
+  const navigate = useNavigate()
+
+
+  useEffect(() => {
+
+    const jwt = cookies.jwt
+    if (jwt) {
+      navigate('/home')
+    }
+
+  }, [])
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -31,10 +46,12 @@ export default function SignIn() {
       password: password,
     });
     axios.post('http://localhost:4000/auth/login', {
-      email : username,
-      password : password
+      email: username,
+      password: password
     }).then(result => {
       console.log(result);
+      setCookie('jwt', result.data.token, { path: '/' });
+      navigate('/home')
     })
   };
 

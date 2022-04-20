@@ -1,7 +1,7 @@
 const {
-    getAllRestaurants, 
-    addItemQuery, 
-    getAllItemsQuery, 
+    getAllRestaurants,
+    addItemQuery,
+    getAllItemsQuery,
     ordersFromRestaurantQuery,
     deleteItemQuery,
     updateItemQuery,
@@ -16,7 +16,7 @@ exports.getAllRestaurants = async (req, res, next) => {
     const connection = await oracledb.getConnection(dbConfig);
     try {
         let vendors = (await connection.execute(getAllRestaurants)).rows;
-
+        // console.log(req.cookies)
         res.status(201).json({
             status: 'success',
             vendors
@@ -94,10 +94,10 @@ exports.addItem = async (req, res, next) => {
 
     try {
         let item = await connection.execute(addItemQuery, {
-            rid : rid,
-            name : req.body.name,
-            price : req.body.price,
-            ids : {type : oracledb.NUMBER, dir : oracledb.BIND_OUT}
+            rid: rid,
+            name: req.body.name,
+            price: req.body.price,
+            ids: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT }
         }, { autoCommit: true });
 
         res.status(201).json({
@@ -180,28 +180,28 @@ exports.getAllOrders = async (req, res, next) => {
     }
 }
 
-exports.deleteItem = async (req,res,next) => {
+exports.deleteItem = async (req, res, next) => {
     const connection = await oracledb.getConnection(dbConfig);
     try {
         //delete later
-        if(!req.user) {
+        if (!req.user) {
             req.user = {
-                id : 'restaurant-01'
+                id: 'restaurant-01'
             }
         }
         const itemDetails = [
             req.params.id,
             req.user.id
         ];
-        
-        let deletedItem = await connection.execute(deleteItemQuery, itemDetails, {autoCommit : true});
-        if(!deletedItem) {
+
+        let deletedItem = await connection.execute(deleteItemQuery, itemDetails, { autoCommit: true });
+        if (!deletedItem) {
             res.status(404).json({
-                message : 'can not find the item in the restaurant'
+                message: 'can not find the item in the restaurant'
             })
         }
         res.status(200).json({
-            status : 'success',
+            status: 'success',
             deletedItem
         })
     } catch (err) {
@@ -209,21 +209,21 @@ exports.deleteItem = async (req,res,next) => {
     } finally {
         if (connection) {
             try {
-              await connection.close();
+                await connection.close();
             } catch (err) {
-              console.error(err);
+                console.error(err);
             }
         }
     }
-} 
+}
 
-exports.updateItem = async (req,res,next) => {
+exports.updateItem = async (req, res, next) => {
     const connection = await oracledb.getConnection(dbConfig);
     try {
         //delete later
-        if(!req.user) {
+        if (!req.user) {
             req.user = {
-                id : 'restaurant-01'
+                id: 'restaurant-01'
             }
         }
         const itemDetails = [
@@ -232,17 +232,17 @@ exports.updateItem = async (req,res,next) => {
             req.params.id,
             req.user.id
         ];
-        
-        let updatedItem = await connection.execute(updateItemQuery, itemDetails, {autoCommit : true});
-        if(!updatedItem) {
+
+        let updatedItem = await connection.execute(updateItemQuery, itemDetails, { autoCommit: true });
+        if (!updatedItem) {
             res.status(404).json({
-                message : 'can not find the item in the restaurant'
+                message: 'can not find the item in the restaurant'
             })
             return;
         }
 
         res.status(200).json({
-            status : 'success',
+            status: 'success',
             updatedItem
         })
     } catch (err) {
@@ -250,9 +250,9 @@ exports.updateItem = async (req,res,next) => {
     } finally {
         if (connection) {
             try {
-              await connection.close();
+                await connection.close();
             } catch (err) {
-              console.error(err);
+                console.error(err);
             }
         }
     }
