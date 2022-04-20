@@ -1,6 +1,7 @@
 const express = require('express');
 const oracledb = require('oracledb');
 const cors = require('cors');
+const cookieParser = require("cookie-parser");
 
 const dbConfig = require('./db/dbConfig');
 const {signupQuery, getAllUsersQuery} = require('./db/queries');
@@ -14,6 +15,7 @@ const app = express();
 conn_init();
 
 app.use(cors());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json({ limit: "10kb" }));
 

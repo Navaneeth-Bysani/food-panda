@@ -149,7 +149,7 @@ const findUserById = `
 `;
 
 const ordersFromRestaurantQuery = `
-            SELECT orders.id, orders.order_time, users.name, users.phone 
+            SELECT orders.id, orders.order_time, users.name, users.phone, orders.isCompleted AS completed 
             FROM orders
             LEFT JOIN users
             ON orders.userId = users.id
