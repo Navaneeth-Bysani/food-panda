@@ -32,6 +32,28 @@ exports.getAllRestaurants = async (req, res, next) => {
     }
 }
 
+exports.getOneRestaurant = async (req, res, next) => {
+    const connection = await oracledb.getConnection(dbConfig);
+    try {
+        let vendor = (await connection.execute(`SELECT name, description, email, phone FROM restaurants WHERE id = :rId`, [req.params.rId])).rows;
+
+        res.status(201).json({
+            status: 'success',
+            vendor
+        })
+    } catch (err) {
+        console.error(err);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    }
+}
+
 exports.getAllItems = async (req, res, next) => {
     const rid = req.params.rid;
     const restaurantDetails = [

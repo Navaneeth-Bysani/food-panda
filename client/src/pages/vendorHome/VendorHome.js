@@ -2,18 +2,19 @@ import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
-import { Button, Container, CssBaseline, Typography } from "@mui/material";
+import { Button, Container, CssBaseline, Typography, Box } from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faChevronLeft, faCircle, faCheckCircle, faPlus, faTrash, faAdd } from '@fortawesome/free-solid-svg-icons';
 import './vendorHome.css'
 import { fontSize } from "@mui/system";
-
+import AddItemModal from './AddItemForm';
 
 const theme = createTheme();
 
 export default function Restaurant() {
     let { rId } = useParams()
     const [items, setItems] = useState([])
+    const [modalOpen, setModalOpen] = useState(false);
 
     useEffect(() => {
         axios.get('http://localhost:4000/restaurants/items/' + 'restaurant-01').then(result => {
@@ -32,13 +33,15 @@ export default function Restaurant() {
         })
     }, [])
 
+
+
     const handleDelete = (itemId, index) => {
         console.log(itemId);
         axios.delete(`http://localhost:4000/restaurants/items/${itemId}`).then(result => {
             console.log(result);
             if(result.data.status === "success") {
                 console.log(items);
-                let newItems = items;
+                let newItems = [...items];
                 newItems.splice(index, 1);
                 setItems(newItems);
                 console.log(items);
@@ -47,7 +50,7 @@ export default function Restaurant() {
     };
 
     const addItem = () => {
-        
+        const restName = 'restaurant-01';
     }
 
     return (
@@ -55,6 +58,7 @@ export default function Restaurant() {
             <div className="title">
                 Hungry Bird
             </div>
+            <AddItemModal modalOpen = {modalOpen} handleClose = {() => setModalOpen(false)}/>
             <Container component="main">
                 <CssBaseline />
                 <Typography sx={{
@@ -65,13 +69,19 @@ export default function Restaurant() {
                 }}>
                     Menu
                 </Typography>
+                <div>
                 <Button 
-                variant="contained"
-                style = {{float : 'right', margin : '10px'}}
-                onClick = {() => addItem()}
-                >
-                    Add Item
-                </Button>
+                    variant="contained"
+                    style = {{margin : '10px', display : 'inline-block'}}
+                    onClick = {() => {
+                        setModalOpen(true)
+                    }}
+                    >
+                        Add Item
+                    </Button>
+                </div>
+                    
+                
                 <div className='item-list' style={{margin : '40px'}}>
                     {items.map((item, index) => (
                         <div className='item-container' key = {index}>
