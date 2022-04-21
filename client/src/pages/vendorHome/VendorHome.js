@@ -9,6 +9,8 @@ import './vendorHome.css'
 import { fontSize } from "@mui/system";
 import AddItemModal from './AddItemForm';
 import UpdateItemModal from './UpdateItem';
+import { useCookies } from 'react-cookie';
+import { Link, useNavigate } from 'react-router-dom';
 
 const theme = createTheme();
 
@@ -17,6 +19,8 @@ export default function Restaurant() {
     const [items, setItems] = useState([])
     const [modalOpen, setModalOpen] = useState(false);
     const [updating, setUpdating] = useState(false);
+    const [cookies, setCookie, removeCookie] = useCookies(['jwt']);
+    const navigate = useNavigate()
     const [updatingItem, setUpdatingItem] = useState({
         id: -1,
         name: "",
@@ -109,10 +113,25 @@ export default function Restaurant() {
         })
     }
 
+    const logout = () => {
+        removeCookie('jwt')
+        navigate('/signin-vendor')
+    }
+
     return (
         <ThemeProvider theme={theme}>
             <div className="title">
                 Hungry Bird
+            </div>
+            <div className='logout' onClick={() => {
+                logout()
+            }}>
+                <p>Logout</p>
+            </div>
+            <div className='orders' onClick={() => {
+                navigate('/orders')
+            }}>
+                <p>{"Go To Orders ->"}</p>
             </div>
             <AddItemModal modalOpen={modalOpen} handleClose={() => setModalOpen(false)} handleSubmit={addItem} />
             {updating ? (<UpdateItemModal modalOpen={updating} handleClose={() => setUpdating(false)}
@@ -123,7 +142,7 @@ export default function Restaurant() {
                 <CssBaseline />
                 <Typography sx={{
                     fontSize: 28,
-                    marginTop: 6,
+                    marginTop: 2,
                     fontWeight: 600,
                     color: '#9C27B0'
                 }}>
