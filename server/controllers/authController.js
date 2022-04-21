@@ -51,15 +51,15 @@ exports.verifyJwtToken = async (req, res, next) => {
     } else if (req.cookies.jwt) {
         token = req.cookies.jwt;
     }
-    
+    console.log(token);
     if (!token) {
         return next(
-            // new AppError("You are not logged in! Please log in to get access.", 401)
+            new AppError("You are not logged in! Please log in to get access.", 401)
         );
     }
     // 2) Verifying token
     const decoded = await promisify(jwt.verify)(token, JWT_SECRET);
-    
+
     req.jwtPayload = {
         id: decoded.id,
         isVendor: decoded.isVendor,
@@ -290,7 +290,7 @@ exports.loginVendor = async (req, res, next) => {
         let vendor = await connection.execute(vendorLoginQuery, vendorDetails, { outFormat: oracledb.OUT_FORMAT_OBJECT });
         console.log(vendor);
         console.log(vendorDetails);
-        
+
         if (vendor.rows.length !== 0) {
             createSendToken(vendor.rows[0], 200, res, true);
         } else {

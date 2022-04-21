@@ -17,8 +17,10 @@ export default function Home() {
     const [orders, setOrders] = useState([])
 
     useEffect(() => {
-        let restaurantId = 'restaurant-01';
-        axios.get(`http://localhost:4000/restaurants/orders/${restaurantId}`).then(result => {
+        // let restaurantId = 'restaurant-01';
+        axios.get(`http://localhost:4000/restaurants/orders-self`, {
+            withCredentials: true
+        }).then(result => {
             setOrders(result.data.orders);
             console.log(result.data);
         })
@@ -40,8 +42,8 @@ export default function Home() {
                     Orders
                 </Typography>
                 <Box>
-                    {orders.map((order,index) => (
-                        <OrderCard order = {order} key = {index} />
+                    {orders.map((order, index) => (
+                        <OrderCard order={order} key={index} />
                     ))}
                 </Box>
             </Container>
@@ -53,13 +55,13 @@ const OrderCard = (props) => {
     return (
         <div>
             <Card
-                style = {{margin : '15px', width : '40%', display : 'inline-block'}}
+                style={{ margin: '15px', width: '40%', display: 'inline-block' }}
             >
                 <CardContent>
                     <Typography variant="h5" component="div">
                         {props.order ? props.order.ID : "Order ID"}
                     </Typography>
-                   
+
                     <Typography variant="body2">
                         {props.order ? props.order.NAME : "Name of customer"}
                     </Typography>
@@ -72,8 +74,8 @@ const OrderCard = (props) => {
                         alignItems: 'center',
                         justifyContent: 'center'
                     }}>
-                            <Button size="small">Completed</Button>
-                            <Button size="small">List</Button>
+                        <Button size="small">Completed</Button>
+                        <Button size="small">List</Button>
                     </CardActions>
                 </CardContent>
                 {/* <CardContent >
@@ -84,7 +86,7 @@ const OrderCard = (props) => {
                         maggi - 6 - Rs.120
                     </Typography>
                 </CardContent> */}
-                
+
             </Card>
         </div>
     )

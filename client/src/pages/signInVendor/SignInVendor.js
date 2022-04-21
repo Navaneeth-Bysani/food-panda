@@ -48,7 +48,7 @@ export default function SignInVendor() {
         axios.post('http://localhost:4000/auth/login-vendor', {
             email: username,
             password: password
-        }, {withCredentials : true}
+        }, { withCredentials: true }
         ).then(result => {
             console.log(result);
             setCookie('jwt', result.data.token, { path: '/' });

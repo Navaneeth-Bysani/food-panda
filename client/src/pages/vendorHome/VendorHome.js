@@ -18,24 +18,24 @@ export default function Restaurant() {
     const [modalOpen, setModalOpen] = useState(false);
     const [updating, setUpdating] = useState(false);
     const [updatingItem, setUpdatingItem] = useState({
-        id : -1,
-        name : "",
-        price : 0
+        id: -1,
+        name: "",
+        price: 0
     });
 
     useEffect(() => {
         axios.get('http://localhost:4000/restaurants/items-self', {
-            withCredentials : true
+            withCredentials: true
         }).then(result => {
             let itemsArr = []
             result.data.items.rows.map((item) => {
                 itemsArr.push({
                     ID: item.ID,
                     name: item.NAME,
-                    price : item.PRICE
+                    price: item.PRICE
                 })
             })
-            
+
             setItems(itemsArr)
         })
     }, [])
@@ -44,9 +44,11 @@ export default function Restaurant() {
 
     const handleDelete = (itemId, index) => {
         console.log(itemId);
-        axios.delete(`http://localhost:4000/restaurants/items/${itemId}`).then(result => {
+        axios.delete(`http://localhost:4000/restaurants/items/${itemId}`, {
+            withCredentials: true
+        }).then(result => {
             console.log(result);
-            if(result.data.status === "success") {
+            if (result.data.status === "success") {
                 console.log(items);
                 let newItems = [...items];
                 newItems.splice(index, 1);
@@ -58,20 +60,22 @@ export default function Restaurant() {
 
     const handleUpdate = (itemId, index) => {
         setUpdatingItem({
-            id : itemId,
-            name : items[index].name,
-            price : items[index].price,
-            index : index
+            id: itemId,
+            name: items[index].name,
+            price: items[index].price,
+            index: index
         });
         setUpdating(true);
     }
 
     const updateItem = (name, price, id, index) => {
         axios.patch(`http://localhost:4000/restaurants/items/${id}`, {
-            name : name,
-            price : price
+            name: name,
+            price: price
+        }, {
+            withCredentials: true
         }).then(result => {
-            if(result.data.status === "success") {
+            if (result.data.status === "success") {
                 let newItems = items;
                 newItems[index].name = name;
                 newItems[index].price = price;
@@ -82,22 +86,25 @@ export default function Restaurant() {
     }
 
     const addItem = (name, price) => {
-        const restName = 'restaurant-01';
-        axios.post(`http://localhost:4000/restaurants/items/${restName}`, {
-            name : name,
-            price : price
+        // const restName = 'restaurant-01';
+        axios.post(`http://localhost:4000/restaurants/items`, {
+            name: name,
+            price: price
+        }, {
+            withCredentials: true
         }).then(result => {
+            console.log("Hi")
             console.log(result);
-            if(result.data.status === "success") {
+            if (result.data.status === "success") {
                 let newItems = [...items];
                 newItems.push({
-                    ID : result.data.item.outBinds.ids[0],
-                    name : name,
-                    price : price
+                    ID: result.data.item.outBinds.ids[0],
+                    name: name,
+                    price: price
                 });
                 setModalOpen(false);
                 setItems(newItems);
-                
+
             }
         })
     }
@@ -107,11 +114,11 @@ export default function Restaurant() {
             <div className="title">
                 Hungry Bird
             </div>
-            <AddItemModal modalOpen = {modalOpen} handleClose = {() => setModalOpen(false)} handleSubmit = {addItem}/>
-            {updating ? (<UpdateItemModal modalOpen = {updating} handleClose = {() => setUpdating(false)} 
-            handleSubmit = {updateItem} item = {updatingItem}
-            /> ): null}
-            
+            <AddItemModal modalOpen={modalOpen} handleClose={() => setModalOpen(false)} handleSubmit={addItem} />
+            {updating ? (<UpdateItemModal modalOpen={updating} handleClose={() => setUpdating(false)}
+                handleSubmit={updateItem} item={updatingItem}
+            />) : null}
+
             <Container component="main">
                 <CssBaseline />
                 <Typography sx={{
@@ -123,38 +130,38 @@ export default function Restaurant() {
                     Menu
                 </Typography>
                 <div>
-                <Button 
-                    variant="contained"
-                    style = {{margin : '10px', display : 'inline-block'}}
-                    onClick = {() => {
-                        setModalOpen(true)
-                    }}
+                    <Button
+                        variant="contained"
+                        style={{ margin: '10px', display: 'inline-block' }}
+                        onClick={() => {
+                            setModalOpen(true)
+                        }}
                     >
                         Add Item
                     </Button>
                 </div>
-                    
-                
-                <div className='item-list' style={{margin : '40px'}}>
+
+
+                <div className='item-list' style={{ margin: '40px' }}>
                     {items.map((item, index) => (
-                        <div className='item-container' key = {index}>
+                        <div className='item-container' key={index}>
                             <div className='item-name'>
                                 <span className='completed'>{`${item.name} - Rs.${item.price}`}</span>
                             </div>
                             <div>
                                 <button>
-                                    <FontAwesomeIcon 
-                                    icon={faPen} 
-                                    onClick={() => handleUpdate(item.ID, index)} 
-                                    style = {{size : '20px'}}
+                                    <FontAwesomeIcon
+                                        icon={faPen}
+                                        onClick={() => handleUpdate(item.ID, index)}
+                                        style={{ size: '20px' }}
                                     />
                                 </button>
                                 {'  '}
                                 <button>
-                                    <FontAwesomeIcon 
-                                    icon={faTrash} 
-                                    onClick={() => handleDelete(item.ID, index)} 
-                                    style = {{size : '20px'}}
+                                    <FontAwesomeIcon
+                                        icon={faTrash}
+                                        onClick={() => handleDelete(item.ID, index)}
+                                        style={{ size: '20px' }}
                                     />
                                 </button>
                             </div>

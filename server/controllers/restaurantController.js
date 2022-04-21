@@ -58,16 +58,16 @@ exports.getOneRestaurant = async (req, res, next) => {
 
 exports.getAllItems = async (req, res, next) => {
     let rId;
-    if(req.params.rid) {
+    if (req.params.rid) {
         rId = req.params.rid;
     } else {
         rId = req.user.id;
     }
-    
+
     const restaurantDetails = [
         rId
     ];
-    
+
 
     const connection = await oracledb.getConnection(dbConfig);
     try {
@@ -91,16 +91,16 @@ exports.getAllItems = async (req, res, next) => {
 }
 
 exports.addItem = async (req, res, next) => {
-    const rid = req.params.rid;
+    const rid = req.user.id;
     const connection = await oracledb.getConnection(dbConfig);
     const itemDetails = [
         rid,
         req.body.name,
         req.body.price
     ];
-    if(rid !== req.user.id) {
+    if (rid !== req.user.id) {
         res.status(401).json({
-            status : 'You are not allowed to do this'
+            status: 'You are not allowed to do this'
         })
         return;
     }
@@ -141,7 +141,7 @@ exports.addItem = async (req, res, next) => {
 }
 
 exports.getAllRestaurantOrders = async (req, res, next) => {
-    const rid = req.params.rid;
+    const rid = req.user.id;
     const restaurantDetails = [
         rid
     ];
@@ -154,8 +154,8 @@ exports.getAllRestaurantOrders = async (req, res, next) => {
 
         res.status(201).json({
             status: 'success',
-            orders : orders.rows,
-            items : items
+            orders: orders.rows,
+            items: items
         })
     } catch (err) {
         console.error(err);

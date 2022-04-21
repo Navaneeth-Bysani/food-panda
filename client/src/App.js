@@ -28,6 +28,7 @@ function App() {
             <Route exact path='/vendor-home' element={<VendorHome />} />
             <Route exact path='/restaurant/:rId' element={<Restaurant />} />
             <Route exact path='/signin-vendor' element={<SignInVendor />} />
+            <Route exact path='/orders' element={<Orders />} />
             {/* <SignIn /> */}
           </Routes>
         </BrowserRouter>
