@@ -8,7 +8,8 @@ router.get('/', restaurantController.getAllRestaurants);
 router.get('/orders-self', verifyJwtToken, loggedInUser, restaurantController.getAllRestaurantOrders);
 router.get('/orders', restaurantController.getAllOrders);
 router.get('/items-self', verifyJwtToken, loggedInUser, restaurantController.getAllItems);
-router.get('/:rId', restaurantController.getOneRestaurant);
+//need to do this
+router.get('/orders/items/:oId', verifyJwtToken, loggedInUser, restaurantController.getItems)
 
 router.get('/items/:rid', restaurantController.getAllItems);
 router.post('/items', verifyJwtToken, loggedInUser, restaurantController.addItem);
@@ -17,6 +18,7 @@ router.patch('/orders/:oid', verifyJwtToken, loggedInUser, restaurantController.
 
 router.patch('/items/:id', restaurantController.updateItem);
 router.delete('/items/:id', restaurantController.deleteItem);
+router.get('/:rId', restaurantController.getOneRestaurant);
 // router.delete('/items/:id',verifyJwtToken, loggedInUser, restaurantController.deleteItem);
 
 
