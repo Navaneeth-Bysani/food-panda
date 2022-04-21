@@ -106,7 +106,7 @@ export default function Restaurant() {
             setItems([])
             getItems()
             setTotalPrice(0)
-            closeOrderModalOnClick()
+            // closeOrderModalOnClick()
         }).catch(err => {
             console.log(err)
         })

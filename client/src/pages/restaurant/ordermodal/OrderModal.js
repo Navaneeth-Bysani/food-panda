@@ -3,16 +3,21 @@ import Dialog from "@mui/material/Dialog";
 import styles from './orderModal.css'
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+import { useState, useEffect } from 'react';
 
 
 export default function OrderModal({ show, close, orderFood, items }) {
 
+    const [ordered, setordered] = useState(false)
+
     const orderFoodModal = () => {
         orderFood()
-        close()
+        setordered(true)
+        // close()
     }
 
     const handleClose = () => {
+        setordered(false)
         close()
     }
 
@@ -38,7 +43,17 @@ export default function OrderModal({ show, close, orderFood, items }) {
                 }}>
                     Your Order
                 </Typography>
-                <Box className="headings">
+                {ordered ? <Typography sx={{
+                    fontSize: 28,
+                    marginTop: 2,
+                    marginBottom: 2,
+                    marginRight: 18,
+                    marginLeft: 18,
+                    fontWeight: 600,
+                }}>
+                    Order Placed
+                </Typography> : null}
+                {ordered ? null : <Box className="headings">
                     <Grid container spacing={1}>
                         <Grid item xs={6} style={{
 
@@ -52,8 +67,8 @@ export default function OrderModal({ show, close, orderFood, items }) {
                             <p>Price</p>
                         </Grid>
                     </Grid>
-                </Box>
-                <div className="items_list">
+                </Box>}
+                {ordered ? null : <div className="items_list">
                     {
                         items.map((itemFood, index) => {
                             return (itemFood.isSelected ?
@@ -73,7 +88,7 @@ export default function OrderModal({ show, close, orderFood, items }) {
                                 : null)
                         })
                     }
-                </div>
+                </div>}
                 <Box className="buttons">
                     <Grid container spacing={0} style={{
                         marginBottom: "20px"
@@ -82,7 +97,7 @@ export default function OrderModal({ show, close, orderFood, items }) {
                         <Grid item xs={1} style={{
                             background: "#FFFFFF"
                         }}></Grid>
-                        <Grid item xs={4.5} style={{
+                        {ordered ? null : <Grid item xs={4.5} style={{
                             textAlign: "center",
                             background: "#9C27B0",
                             cursor: "pointer",
@@ -91,7 +106,7 @@ export default function OrderModal({ show, close, orderFood, items }) {
                         }}
                             onClick={() => { orderFoodModal() }}>
                             <p>{"Place Order"}</p>
-                        </Grid>
+                        </Grid>}
                         <Grid item xs={1} style={{
                             background: "#FFFFFF"
                         }}>
