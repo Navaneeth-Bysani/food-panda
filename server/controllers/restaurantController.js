@@ -174,7 +174,7 @@ exports.getAllOrders = async (req, res, next) => {
     const connection = await oracledb.getConnection(dbConfig);
     try {
 
-        let orders = await connection.execute(`SELECT * FROM orders`);
+        let orders = await connection.execute(`SELECT * FROM orders WHERE isCompleted = 'NO'`);
         // console.log(orders);
         res.status(201).json({
             status: 'success',
@@ -233,7 +233,7 @@ exports.deleteItem = async (req, res, next) => {
 exports.updateItem = async (req, res, next) => {
     const connection = await oracledb.getConnection(dbConfig);
     try {
-        
+
         const itemDetails = [
             req.body.name,
             req.body.price,
@@ -266,14 +266,15 @@ exports.updateItem = async (req, res, next) => {
     }
 }
 
-exports.finishOrder = async(req,res,next) => {
+exports.finishOrder = async (req, res, next) => {
     const connection = await oracledb.getConnection(dbConfig);
+    // console.log('1');
     try {
-        
+
         const orderDetails = [
             req.params.oid
         ];
-
+        // console.log('2');
         let finishedOrder = await connection.execute(`UPDATE orders SET isCompleted = 'YES' WHERE id = :oid`, orderDetails, { autoCommit: true });
         if (!finishedOrder) {
             res.status(404).json({
@@ -284,7 +285,7 @@ exports.finishOrder = async(req,res,next) => {
 
         res.status(200).json({
             status: 'success',
-            updatedItem
+            finishedOrder
         })
     } catch (err) {
         console.error(err);

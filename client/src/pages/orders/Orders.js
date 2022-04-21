@@ -55,6 +55,8 @@ const OrderCard = (props) => {
     const finishOrder = () => {
         //route - /restaurants/orders/orderId PATCH
         axios.patch('http://localhost:4000/restaurants/orders/' + props.order.ID, {
+
+        }, {
             withCredentials: true
         }).then(result => {
             console.log(result)
