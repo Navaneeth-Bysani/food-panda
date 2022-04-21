@@ -16,6 +16,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useNavigate } from 'react-router-dom';
 import './landingpage.css';
+import logo from './hungryBird.webp';
 
 const theme = createTheme();
 
@@ -38,7 +39,8 @@ export default function Landingpage() {
             >
             
                 <img 
-                src = "https://imgs.search.brave.com/b5tgAhCADM2rWXOYBvUULGbLhI9EJNRaCI7UlVwCurw/rs:fit:498:225:1/g:ce/aHR0cHM6Ly90c2Uy/Lm1tLmJpbmcubmV0/L3RoP2lkPU9JUC5E/Y21RYm9fTFJXZm1K/ajE2aWpKV1lBSGFI/RCZwaWQ9QXBp"
+                src = {logo}
+                // src = "https://imgs.search.brave.com/b5tgAhCADM2rWXOYBvUULGbLhI9EJNRaCI7UlVwCurw/rs:fit:498:225:1/g:ce/aHR0cHM6Ly90c2Uy/Lm1tLmJpbmcubmV0/L3RoP2lkPU9JUC5E/Y21RYm9fTFJXZm1K/ajE2aWpKV1lBSGFI/RCZwaWQ9QXBp"
                 style = {{margin : '10px'}}
                 />
             <Box>
