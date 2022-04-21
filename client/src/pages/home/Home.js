@@ -16,6 +16,7 @@ const theme = createTheme();
 export default function Home() {
 
     const [restaurants, setrestaurants] = useState([])
+    const [orders, setorders] = useState([])
     const [cookies, setCookie, removeCookie] = useCookies(['jwt']);
     const navigate = useNavigate()
 
@@ -32,6 +33,7 @@ export default function Home() {
         }).catch(err => console.log(err))
 
         axios.get('http://localhost:4000/users/orders', { withCredentials: true }).then(result => {
+            setorders(result.data.userOrders.orders)
             console.log(result);
         }).catch(err => console.log(err))
 
@@ -98,21 +100,21 @@ export default function Home() {
                     fontWeight: 600,
                     color: '#9C27B0'
                 }}>
-                    Orders
+                    Pending Orders
                 </Typography>
                 <Box
                     sx={{
                         marginTop: 2,
                         marginBottom: 4,
                         display: 'flex',
-                        flexDirection: 'row',
+                        flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center'
                     }}
                 >
-                    <VendorCard key={1} />
-                    <VendorCard key={2} />
-                    <VendorCard key={3} />
+                    {orders ? orders.map((order, index) => {
+                        return (<VendorCard ord={order} key={index} />)
+                    }) : null}
                 </Box>
             </Container>
         </ThemeProvider>
@@ -120,14 +122,15 @@ export default function Home() {
 }
 
 
-const VendorCard = ({ rest }) => {
+const VendorCard = ({ rest, ord }) => {
 
     const navigate = useNavigate()
     const [state, setState] = useState({
         raised: false,
         shadow: 1,
     })
-    const [restaurant, setrestaurant] = useState(rest)
+    const [restaurant, setrestaurant] = useState(rest ? rest : null)
+    const [order, setorder] = useState(ord ? ord : null)
 
 
     return (
@@ -139,7 +142,7 @@ const VendorCard = ({ rest }) => {
                     marginRight: 8,
                     marginTop: 3,
                     transition: "transform 0.15s ease-in-out",
-                    cursor: 'pointer'
+                    cursor: "pointer"
                 }}
                 classes={{
                     root: state.raised ? {
@@ -150,7 +153,7 @@ const VendorCard = ({ rest }) => {
                 onMouseOut={() => setState({ raised: false, shadow: 1 })}
                 raised={state.raised} zdepth={state.shadow}
                 onClick={() => {
-                    navigate('/restaurant/' + restaurant[1])
+                    if (restaurant) navigate('/restaurant/' + restaurant[1])
                 }}
             >
                 <CardContent>
@@ -158,23 +161,26 @@ const VendorCard = ({ rest }) => {
                         Word of the Day
                     </Typography> */}
                     <Typography variant="h5" component="div">
-                        {restaurant ? restaurant[0] : "Restaurant Name"}
+                        {restaurant ? restaurant[0] : order ? "Order ID: " + order.ID : ""}
                     </Typography>
                     {/* <Typography sx={{ mb: 1.5 }} color="text.secondary">
                         {restaurant ? restaurant[1] : "id"}
                     </Typography> */}
                     <Typography variant="body2">
-                        {restaurant ? restaurant[4] : "Description"}
+                        {restaurant ? restaurant[4] : order ? order.NAME : ""}
+                    </Typography>
+                    <Typography variant="body2">
+                        {restaurant ? "" : order ? order.ORDER_TIME : ""}
                     </Typography>
                 </CardContent>
-                <CardActions sx={{
+                {restaurant ? <CardActions sx={{
                     display: 'flex',
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'center'
                 }}>
                     <Button size="small">Order</Button>
-                </CardActions>
+                </CardActions> : null}
             </Card>
         </div>
     )
