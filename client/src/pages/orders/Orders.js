@@ -52,6 +52,9 @@ export default function Home() {
 }
 
 const OrderCard = (props) => {
+    const finishOrder = () => {
+        //route - /restaurants/orders/orderId PATCH
+    }
     return (
         <div>
             <Card
@@ -74,7 +77,7 @@ const OrderCard = (props) => {
                         alignItems: 'center',
                         justifyContent: 'center'
                     }}>
-                        <Button size="small">Completed</Button>
+                        <Button size="small" onClick = {finishOrder}>Completed</Button>
                         <Button size="small">List</Button>
                     </CardActions>
                 </CardContent>

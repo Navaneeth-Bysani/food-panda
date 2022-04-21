@@ -233,12 +233,7 @@ exports.deleteItem = async (req, res, next) => {
 exports.updateItem = async (req, res, next) => {
     const connection = await oracledb.getConnection(dbConfig);
     try {
-        //delete later
-        if (!req.user) {
-            req.user = {
-                id: 'restaurant-01'
-            }
-        }
+        
         const itemDetails = [
             req.body.name,
             req.body.price,
@@ -248,6 +243,39 @@ exports.updateItem = async (req, res, next) => {
 
         let updatedItem = await connection.execute(updateItemQuery, itemDetails, { autoCommit: true });
         if (!updatedItem) {
+            res.status(404).json({
+                message: 'can not find the item in the restaurant'
+            })
+            return;
+        }
+
+        res.status(200).json({
+            status: 'success',
+            updatedItem
+        })
+    } catch (err) {
+        console.error(err);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    }
+}
+
+exports.finishOrder = async(req,res,next) => {
+    const connection = await oracledb.getConnection(dbConfig);
+    try {
+        
+        const orderDetails = [
+            req.params.oid
+        ];
+
+        let finishedOrder = await connection.execute(`UPDATE orders SET isCompleted = 'YES' WHERE id = :oid`, orderDetails, { autoCommit: true });
+        if (!finishedOrder) {
             res.status(404).json({
                 message: 'can not find the item in the restaurant'
             })

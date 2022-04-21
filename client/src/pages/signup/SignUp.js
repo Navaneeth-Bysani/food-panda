@@ -51,7 +51,8 @@ export default function SignUp() {
         }).then(result => {
             console.log(result);
             setCookie('jwt', result.data.token, { path: '/' });
-        })
+            navigate('/home')
+        }).catch(err => console.log(err))
     };
 
     return (
