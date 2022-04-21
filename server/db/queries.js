@@ -153,7 +153,7 @@ const ordersFromRestaurantQuery = `
             FROM orders
             LEFT JOIN users
             ON orders.userId = users.id
-            WHERE rid = :rid
+            WHERE rid = :rid AND isCompleted = 'NO'
 `;
 
 const getOrderedItems = `
