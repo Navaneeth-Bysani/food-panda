@@ -24,7 +24,9 @@ export default function Restaurant() {
     });
 
     useEffect(() => {
-        axios.get('http://localhost:4000/restaurants/items/' + 'restaurant-01').then(result => {
+        axios.get('http://localhost:4000/restaurants/items-self', {
+            withCredentials : true
+        }).then(result => {
             let itemsArr = []
             result.data.items.rows.map((item) => {
                 itemsArr.push({

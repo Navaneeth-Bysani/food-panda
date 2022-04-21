@@ -19,6 +19,12 @@ const connFunc = async () => {
         
         try {
             // await connection.execute(`ALTER TABLE ordersList RENAME COLUMN quanitity to quantity`);
+            // await connection.execute(`DELETE FROM ordersList`);
+            // await connection.execute(`DELETE FROM orders`);
+            // await connection.execute(`DELETE FROM items`);
+            // await connection.execute(`DELETE FROM restaurants`);
+            // await connection.execute(`DELETE FROM users`);
+
             await connection.execute(createOrderTable);
             await connection.execute(createOrderedItemsTable);
             await connection.execute(createOrderSequence);

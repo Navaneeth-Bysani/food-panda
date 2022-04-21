@@ -9,6 +9,7 @@ import Restaurant from './pages/restaurant/Restaurant';
 import LandingPage from './pages/landingpage/LandingPage';
 import { CookiesProvider, get, useCookies } from 'react-cookie';
 import SignInVendor from './pages/signInVendor/SignInVendor';
+import Orders from './pages/orders/Orders';
 
 export let JWTTOKEN = null;
 
@@ -26,7 +27,7 @@ function App() {
             <Route exact path='/home' element={<Home />} />
             <Route exact path='/vendor-home' element={<VendorHome />} />
             <Route exact path='/restaurant/:rId' element={<Restaurant />} />
-            <Route exact path='signin-vendor' element={<SignInVendor />} />
+            <Route exact path='/signin-vendor' element={<SignInVendor />} />
             {/* <SignIn /> */}
           </Routes>
         </BrowserRouter>

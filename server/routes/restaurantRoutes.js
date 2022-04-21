@@ -6,10 +6,11 @@ const { verifyJwtToken, loggedInUser } = require('./../controllers/authControlle
 
 router.get('/', restaurantController.getAllRestaurants);
 router.get('/orders', restaurantController.getAllOrders);
+router.get('/items-self', verifyJwtToken, loggedInUser, restaurantController.getAllItems);
 router.get('/:rId', restaurantController.getOneRestaurant);
+
 router.get('/items/:rid', restaurantController.getAllItems);
-router.post('/items/:rid', restaurantController.addItem);
-// router.post('/items/:rid', verifyJwtToken, loggedInUser,restaurantController.addItem);
+router.post('/items/:rid', verifyJwtToken, loggedInUser,restaurantController.addItem);
 
 router.get('/orders/:rid', restaurantController.getAllRestaurantOrders);
 
