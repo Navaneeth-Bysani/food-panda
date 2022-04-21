@@ -61,3 +61,29 @@
     color: green;
     font-weight: 800;
 }
+
+.logout {
+    display: flex;
+    flex-direction: row-reverse;
+    margin-right: 30px;
+    margin-top: 20px;
+    color: #9C27B0;
+    font-weight: 600;
+}
+
+.orders {
+    display: flex;
+    flex-direction: row;
+    margin-left: 30px;
+    margin-top: 20px;
+    color: #9C27B0;
+    font-weight: 600;
+}
+
+.logout p {
+    cursor: pointer;
+}
+
+.orders p {
+    cursor: pointer;
+}
