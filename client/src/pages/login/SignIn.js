@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,31 +14,45 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import './signin.css'; 
-
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
+import './signin.css';
 
 const theme = createTheme();
 
 export default function SignIn() {
+
+  const [username, setusername] = useState("")
+  const [password, setpassword] = useState("")
+  const [cookies, setCookie] = useCookies(['jwt']);
+  const navigate = useNavigate()
+
+
+  useEffect(() => {
+
+    const jwt = cookies.jwt
+    if (jwt) {
+      navigate('/home')
+    }
+
+  }, [])
+
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+      username: username,
+      password: password,
     });
+    axios.post('http://localhost:4000/auth/login', {
+      email: username,
+      password: password
+    }).then(result => {
+      console.log(result);
+      setCookie('jwt', result.data.token, { path: '/' });
+      navigate('/home')
+    })
   };
 
   return (
@@ -65,6 +81,10 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
+              value={username}
+              onChange={(e) =>
+                setusername(e.target.value)
+              }
               id="email"
               label="Email Address"
               name="email"
@@ -75,16 +95,16 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
+              value={password}
+              onChange={(e) =>
+                setpassword(e.target.value)
+              }
               name="password"
               label="Password"
               type="password"
               id="password"
               autoComplete="current-password"
             />
-            {/* <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            /> */}
             <Button
               type="submit"
               fullWidth
@@ -93,12 +113,11 @@ export default function SignIn() {
             >
               Sign In
             </Button>
-            <Link href="#" variant="body2">
-                  Don't have an account? Sign Up
+            <Link href="/signup" variant="body2">
+              Don't have an account? Sign Up
             </Link>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
     </ThemeProvider>
   );
